@@ -8,7 +8,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 
 ## Current Progress
 - D1: Built return calculator using Python for loops
-- D2: Rebuilt using NumPy - max, min, mean, std, returns
+- D2: Rebuilt calculator using NumPy, learned indexing,log returns, variance, win rate
 
 ## Files
 - return_calculator.py: Calculates daily returns, mean, variance, and standard deviation
@@ -16,6 +16,9 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 
 ## Skills Being Built
 - Python
+- numpy
+- Log Returns
+- Vectorised Operations
 - Statistics
 - Market Microstructure
 - Machine Learning
