@@ -33,13 +33,20 @@
 
 ---
 
-## D3 — Pandas Basics
-
+D3 — Pandas Basics
 **Learned:**
--
+- Downloaded real SPY data using yfinance
+- What a DataFrame is and how it differs from NumPy array
+- pct_change() to calculate 1257 daily returns
+- df['column'] syntax and why quotes are needed
+- Plotted closing price and daily returns using matplotlib
+- Saved data to CSV using to_csv()
 
 **Built:**
 - pandas_basics.py
+- Real SPY price chart 2020 to 2024
+- Real SPY daily returns chart
+- Spotted COVID crash spike in March 2020
 
 **Confused:**
--
+- nothing major
