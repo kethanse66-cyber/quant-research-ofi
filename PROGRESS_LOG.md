@@ -33,7 +33,7 @@
 
 ---
 
-D3 — Pandas Basics
+## D3 — Pandas Basics + DataFrame Operations
 **Learned:**
 - Downloaded real SPY data using yfinance
 - What a DataFrame is and how it differs from NumPy array
@@ -41,12 +41,25 @@ D3 — Pandas Basics
 - df['column'] syntax and why quotes are needed
 - Plotted closing price and daily returns using matplotlib
 - Saved data to CSV using to_csv()
+- df.shape → rows and columns
+- df.describe() → statistics of all columns
+- df.isnull().sum() → count missing values
+- df.loc[] → select rows by date
+- df.sort_values() → sort by any column
+- df.rolling(20).mean() → 20 day moving average
+- df.resample('ME').sum() → monthly returns
+- df.dropna() → remove missing values
+- Read COVID crash March 2020 in real data
+- Volatility clustering concept
+- [] vs () rule in Pandas
 
 **Built:**
 - pandas_basics.py
-- Real SPY price chart 2020 to 2024
-- Real SPY daily returns chart
-- Spotted COVID crash spike in March 2020
+- SPY closing price chart 2020 to 2024
+- SPY daily returns chart
+- SPY returns vs 20 day rolling average chart
+- Found 5 worst and 5 best days in SPY history
+
 
 **Confused:**
 - nothing major
