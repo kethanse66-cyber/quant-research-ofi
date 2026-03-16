@@ -9,7 +9,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 ## Current Progress
 - D1: Built return calculator using Python for loops
 - D2: Rebuilt calculator using NumPy, learned indexing,log returns, variance, win rate
--  D3: Loaded real SPY data, calculated daily returns, plotted price and returns charts
+-  D3: Loaded real SPY data, 8 DataFrame operations, 3 charts
 
 
 ## Files
@@ -25,3 +25,12 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - Statistics
 - Market Microstructure
 - Machine Learning
+
+ 
+- Key Concepts Learned So Far
+- Simple returns: price[1:] / price[:-1] - 1
+- Log returns: np.log(price[1:] / price[:-1])
+- DataFrame operations: shape, describe, isnull, loc, 
+  sort_values, rolling, resample, dropna
+- Volatility clustering: big crashes and recoveries happen together
+- COVID crash March 2020: SPY fell 9.9% in one month
