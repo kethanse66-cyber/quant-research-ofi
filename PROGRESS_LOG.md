@@ -52,6 +52,25 @@
 - Read COVID crash March 2020 in real data
 - Volatility clustering concept
 - [] vs () rule in Pandas
+- ## D4 — Descriptive Stats + SciPy
+**Learned:**
+- What scipy.stats is and why we use it
+- skewness: SPY = -0.54, crashes bigger than rallies
+- kurtosis: SPY = 11.44, extreme days happen far more than normal
+- normality test: p-value = 0.0, SPY confirmed not normal
+- histogram with normal curve overlay
+- density=True to compare histogram and curve on same scale
+- alpha for transparency
+- np.linspace to create smooth curve points
+- stats.norm.pdf to draw perfect normal bell curve
+
+**Built:**
+- stats_report.py
+- histogram of SPY returns with normal curve overlay
+- proved SPY is not normally distributed three ways
+
+**Confused:**
+- nothing major
 
 **Built:**
 - pandas_basics.py
