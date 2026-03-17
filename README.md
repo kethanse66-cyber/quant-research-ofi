@@ -10,12 +10,16 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - D1: Built return calculator using Python for loops
 - D2: Rebuilt calculator using NumPy, learned indexing,log returns, variance, win rate
 -  D3: Loaded real SPY data, 8 DataFrame operations, 3 charts
+-  D4: Proved SPY returns are not normal. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
+
 
 
 ## Files
 - return_calculator.py: Calculates daily returns, mean, variance, and standard deviation
 - return_calculator_numpy.py: Same calculator rewritten using NumPy, no for loops
 - pandas_basics.py: Loads real SPY data, calculates returns, plots price and returns charts
+- stats_report.py: Proves SPY returns are not normal using skewness, kurtosis, normality test
+
 ## Skills Being Built
 - Python
 - numpy
