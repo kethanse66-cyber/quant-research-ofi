@@ -82,3 +82,19 @@
 
 **Confused:**
 - nothing major
+
+- ## D5 — Hypothesis Testing
+**Learned:**
+- What a null hypothesis is
+- t-statistic: how far the mean is from zero in standard errors
+- p-value above 0.05 means result could be luck
+- ttest_1samp from scipy.stats
+- f-strings and round() for printing results
+
+**Built:**
+- hypothesis_test.py
+- tested if SPY mean return is different from zero
+- t-stat = 1.66, p-value = 0.096, cannot confirm it is real
+
+**Confused:**
+- nothing major
