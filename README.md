@@ -9,9 +9,10 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 ## Current Progress
 - D1: Built return calculator using Python for loops
 - D2: Rebuilt calculator using NumPy, learned indexing,log returns, variance, win rate
--  D3: Loaded real SPY data, 8 DataFrame operations, 3 charts
--  D4: Proved SPY returns are not normal. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
--   D5: Hypothesis test on SPY returns.  Mean = 0.00062, p-value = 0.096, cannot confirm mean is real
+- D3: Loaded real SPY data, 8 DataFrame operations, 3 charts
+- D4: Proved SPY returns are not normal. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
+- D5: Hypothesis test on SPY returns.  Mean = 0.00062, p-value = 0.096, cannot confirm mean is real
+- D6: SPY vs QQQ correlation=0.93. OLS regression beta=1.13, R-squared=0.87, P-value=0.0
 
 
 
@@ -21,7 +22,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - pandas_basics.py: Loads real SPY data, calculates returns, plots price and returns charts
 - stats_report.py: Proves SPY returns are not normal using skewness, kurtosis, normality test
 - hypothesis_test.py: Tests if SPY mean daily return is - statistically different from zero using ttest_1samp
-
+- regression_analysis.py: SPY vs QQQ correlation and OLS regression, beta=1.13, R-squared=0.87
 ## Skills Being Built
 - Python
 - numpy
@@ -40,3 +41,9 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
   sort_values, rolling, resample, dropna
 - Volatility clustering: big crashes and recoveries happen together
 - COVID crash March 2020: SPY fell 9.9% in one month
+- Null hypothesis: assumption we try to reject using data
+- P-value: probability the result happened by random chance
+- Correlation: measures direction of relationship between two assets
+- OLS Regression: finds exact multiplier between two assets
+- Beta: when SPY moves 1%, QQQ moves 1.13%
+- R-squared: how much of QQQ movement is explained by SPY
