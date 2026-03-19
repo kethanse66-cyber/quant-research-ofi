@@ -98,3 +98,23 @@
 
 **Confused:**
 - nothing major
+
+- ## D6 — Correlation + OLS Regression
+**Learned:**
+- Correlation measures direction of relationship between two assets
+- SPY vs QQQ correlation = 0.93, very strongly related
+- OLS regression finds exact multiplier, not just direction
+- Beta = 1.13: when SPY moves 1%, QQQ moves 1.13%
+- R-squared = 0.87: SPY explains 87% of QQQ movement
+- P-value = 0.0: relationship is real, not random chance
+- sm.add_constant adds intercept column for alpha calculation
+- Residual skew and kurtosis visible inside model.summary()
+
+**Built:**
+- regression_analysis.py
+- SPY vs QQQ correlation using .corr()
+- OLS regression using statsmodels
+- Scatter plot of daily returns
+
+**Confused:**
+- nothing major
