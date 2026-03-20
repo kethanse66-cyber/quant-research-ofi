@@ -13,6 +13,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - D4: Proved SPY returns are not normal. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
 - D5: Hypothesis test on SPY returns.  Mean = 0.00062, p-value = 0.096, cannot confirm mean is real
 - D6: SPY vs QQQ correlation=0.93. OLS regression beta=1.13, R-squared=0.87, P-value=0.0
+- - D7: ADF test on SPY. Price p-value=0.948 (not stationary).  Returns p-value=0.0 (stationary). Rolling mean and std plotted.
 
 
 
@@ -23,6 +24,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - stats_report.py: Proves SPY returns are not normal using skewness, kurtosis, normality test
 - hypothesis_test.py: Tests if SPY mean daily return is - statistically different from zero using ttest_1samp
 - regression_analysis.py: SPY vs QQQ correlation and OLS regression, beta=1.13, R-squared=0.87
+-  stationarity_test.py: ADF stationarity test on SPY price and returns. rolling 20-day mean and std plotted.
 ## Skills Being Built
 - Python
 - numpy
@@ -47,3 +49,8 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - OLS Regression: finds exact multiplier between two assets
 - Beta: when SPY moves 1%, QQQ moves 1.13%
 - R-squared: how much of QQQ movement is explained by SPY
+-  Stationarity: a series is stationary if mean and variance dont change over time
+- SPY price is NOT stationary (p=0.948) — it trends upward
+- SPY returns ARE stationary (p=0.0) — they fluctuate around zero
+- ADF test: p below 0.05 means stationary, p above 0.05 means not stationary
+- Always test stationarity before running any regression
