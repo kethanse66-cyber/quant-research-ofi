@@ -118,3 +118,20 @@
 
 **Confused:**
 - nothing major
+
+- ## D7 — Time Series + Stationarity
+**Learned:**
+- What stationarity means and why it matters
+- ADF test using statsmodels adfuller()
+- SPY price is NOT stationary: p-value = 0.948
+- SPY returns ARE stationary: p-value = 0.0
+- Rolling 20-day mean and std using .rolling(20)
+- If you regress two non-stationary series you get fake results
+
+**Built:**
+- stationarity_test.py
+- ADF test on SPY price and returns
+- Rolling mean and std chart
+
+**Confused:**
+- nothing major
