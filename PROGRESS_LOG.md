@@ -135,3 +135,20 @@
 
 **Confused:**
 - nothing major
+
+- ## D8 — Multiple Testing Problem
+**Learned:**
+- Why testing many strategies always produces fake signals
+- Bonferroni correction: new threshold = 0.05 / number of tests
+- Before correction: 1 strategy looked significant
+- After correction: 0 survived
+- This lesson protects the entire research project
+
+**Built:**
+- multiple_testing_demo.py
+- 20 random strategies tested
+- Bonferroni correction applied
+- Proved the 1 signal was pure luck
+
+**Confused:**
+- nothing major
