@@ -155,3 +155,20 @@
 - 
 Apr 3 - R1 - Returned. Reviewed all scripts. 
 Data source decided: Massive..com
+
+## D9 — Simple Order Book (Phase 1 Start)
+**Learned:**
+- What a limit order book is
+- Bid and ask dictionaries
+- Bid-ask spread calculation
+- Mid price formula
+- OFI = sum(bids) - sum(asks)
+
+**Built:**
+- phase1_synthetic_pipeline/simple_orderbook.py
+- add_order function for buy and sell
+- mid_price function
+- calculate_ofi function
+
+**Confused:**
+- nothing major
