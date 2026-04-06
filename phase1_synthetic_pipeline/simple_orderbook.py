@@ -23,9 +23,13 @@ def mid_price():
 def calculate_ofi():
     return sum(bids.values()) - sum(asks.values())
 
+def queue_imbalance():
+    return (bids[max(bids)] - asks[min(asks)]) / (bids[max(bids)] + asks[min(asks)])
+
 # Test
 add_order("buy", 96, 1000)
 print("Bids:", bids)
 print("Asks:", asks)
 print("Mid Price:", mid_price())
 print("OFI:", calculate_ofi())
+print(queue_imbalance())
