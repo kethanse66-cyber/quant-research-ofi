@@ -1,15 +1,7 @@
 # simple_orderbook.py
-# Day 1 — Basic Order Book Structure
 
-bids = {}
-bids[100] = 500
-bids[99] = 300
-bids[98] = 200
-
-asks = {}
-asks[101] = 400
-asks[102] = 600
-asks[103] = 100
+bids = {100: 500, 99: 300, 98: 200}
+asks = {101: 400, 102: 600, 103: 100}
 
 def add_order(side, price, quantity):
     if side == "buy":
@@ -17,19 +9,28 @@ def add_order(side, price, quantity):
     elif side == "sell":
         asks[price] = quantity
 
+def best_bid():
+    return max(bids)
+
+def best_ask():
+    return min(asks)
+
 def mid_price():
-    return (max(bids) + min(asks)) / 2
+    return (best_bid() + best_ask()) / 2
 
 def calculate_ofi():
     return sum(bids.values()) - sum(asks.values())
 
 def queue_imbalance():
-    return (bids[max(bids)] - asks[min(asks)]) / (bids[max(bids)] + asks[min(asks)])
+    bid = bids[best_bid()]
+    ask = asks[best_ask()]
+    return (bid - ask) / (bid + ask)
 
-# Test
+# test
 add_order("buy", 96, 1000)
+
 print("Bids:", bids)
 print("Asks:", asks)
 print("Mid Price:", mid_price())
 print("OFI:", calculate_ofi())
-print(queue_imbalance())
+print("Queue Imbalance:", queue_imbalance())
