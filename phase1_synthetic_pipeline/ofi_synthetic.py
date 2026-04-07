@@ -72,3 +72,17 @@ df["ofi_roll_mean_5"] = df["ofi"].rolling(5).mean()
 # -----------------------------
 print("\nData preview:")
 print(df.head(15))
+# -----------------------------
+# Mid price + returns
+# -----------------------------
+df["mid_price"] = (df["bid_price"] + df["ask_price"]) / 2
+df["mid_return"] = df["mid_price"].pct_change()
+df["future_mid_return"] = df["mid_return"].shift(-1)
+
+# -----------------------------
+# IC calculation
+# -----------------------------
+ic = df["ofi"].corr(df["future_mid_return"])
+print("OFI IC:", ic)
+
+print(df[["ofi","mid_price","mid_return","future_mid_return"]].head(10))
