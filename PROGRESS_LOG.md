@@ -172,3 +172,36 @@ Data source decided: Massive..com
 
 **Confused:**
 - nothing major
+- ## D10 — Synthetic OFI + Spread + Rolling Features
+
+**Learned:**
+- Order Flow Imbalance (OFI) using delta bid and delta ask
+- Synthetic order book generation using NumPy
+- Bid size vs ask size interpretation
+- Spread = ask_price − bid_price
+- Rolling window features using pandas rolling()
+- Rolling mean, rolling sum, rolling std
+- Why rolling smooths noisy microstructure signals
+- OFI positive = buy pressure
+- OFI negative = sell pressure
+
+**Built:**
+- ofi_synthetic.py
+- Synthetic bid and ask sizes
+- OFI calculation using diff
+- Synthetic bid and ask prices
+- Spread calculation
+- DataFrame with microstructure features
+- Rolling OFI mean (5,10)
+- Rolling OFI sum
+- Rolling OFI std
+
+**Key Results:**
+- OFI constructed successfully
+- Buy vs sell pressure measured
+- Spread generated realistically
+- Rolling OFI smooth signal created
+
+**Confused:**
+- np.convolve vs pandas rolling
+- Rolling window meaning (ticks vs days)
