@@ -14,7 +14,9 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - D6: SPY vs QQQ correlation=0.93. OLS regression beta=1.13, R-squared=0.87, P-value=0.0
 - D7: ADF test on SPY. Price p-value=0.948 (not stationary). Returns p-value=0.0 (stationary)
 - D8: Multiple testing on 20 random strategies. 1 fake signal before Bonferroni, 0 after correction
-- D9: Built simple order book. add_order, mid_price, calculate_ofi functions. Phase 1 started.
+- pahse1-data pipline
+- D1: Built simple order book. add_order, mid_price, calculate_ofi functions. Phase 1 started.
+- D2: Built synthetic OFI pipeline. Generated bid/ask sizes, calculated OFI, spread, and rolling features
 
 ## Files
 ### phase1_foundations/
@@ -27,8 +29,10 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - stationarity_test.py: ADF test on SPY price and returns. Rolling mean and std plotted
 - multiple_testing_demo.py: Bonferroni correction on 20 random strategies
 
+
 ### phase1_synthetic_pipeline/
 - simple_orderbook.py: Limit order book with add_order, mid_price, calculate_ofi functions
+-  ofi_synthetic.py: Synthetic bid/ask data, OFI calculation, spread, rolling OFI features
 
 ## Skills Being Built
 - Python, NumPy, Pandas
@@ -57,3 +61,12 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - Limit order book: bids and asks stored as price-quantity dictionaries
 - Mid price: (best_bid + best_ask) / 2
 - OFI: sum(bid quantities) - sum(ask quantities). Positive = more buyers = price goes up
+- - Order Flow Imbalance (OFI): delta_bid - delta_ask
+- Positive OFI: buyers dominate
+- Negative OFI: sellers dominate
+- Spread: ask_price - bid_price
+- Rolling window: smooths noisy microstructure signals
+- Rolling mean: average OFI over window
+- Rolling sum: cumulative order flow pressure
+- Rolling std: volatility of order flow
+- Synthetic order book: simulated bid/ask liquidity
