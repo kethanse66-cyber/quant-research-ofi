@@ -20,7 +20,7 @@ df['effective_spread'] = 2 * abs(df['trade_price'] - df['mid_price'])
 
 # Roll Spread
 df['price_change'] = df['mid_price'].diff()
-roll_cov = df['price_change'].autocorr(lag=1)
+roll_cov = df['price_change'].cov(df['price_change'].shift(1))
 roll_spread = 2 * np.sqrt(-roll_cov)
 
 # Print Results
