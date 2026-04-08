@@ -17,6 +17,7 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - pahse1-data pipline
 - D1: Built simple order book. add_order, mid_price, calculate_ofi functions. Phase 1 started.
 - D2: Built synthetic OFI pipeline. Generated bid/ask sizes, calculated OFI, spread, and rolling features
+- D3: spread_calculator.py: Quoted spread, effective spread, Roll spread. Comparison chart plotted
 
 ## Files
 ### phase1_foundations/
@@ -33,6 +34,8 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 ### phase1_synthetic_pipeline/
 - simple_orderbook.py: Limit order book with add_order, mid_price, calculate_ofi functions
 -  ofi_synthetic.py: Synthetic bid/ask data, OFI calculation, spread, rolling OFI features
+- spread_calculator.py: Quoted spread, effective spread, Roll spread. Comparison chart plotted
+
 
 ## Skills Being Built
 - Python, NumPy, Pandas
@@ -70,3 +73,8 @@ Building a Cross-Asset Microstructure Alpha Signal from scratch.
 - Rolling sum: cumulative order flow pressure
 - Rolling std: volatility of order flow
 - Synthetic order book: simulated bid/ask liquidity
+- - Quoted spread: ask - bid, direct measure of trading cost
+- Effective spread: 2 * abs(trade_price - mid_price), actual cost of trade
+- Effective spread always smaller than quoted spread
+- Roll spread: spread estimated from price autocorrelation, no bid/ask needed
+- Negative price autocorrelation reveals bid-ask bounce pattern
