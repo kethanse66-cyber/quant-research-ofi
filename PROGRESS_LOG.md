@@ -1,226 +1,80 @@
 # Progress Log
 
-## D1 — Return Calculator
+## Phase 0 — Foundations
 
-**Learned:**
-- Python for loops, lists, basic math operations
-
-**Built:**
-- return_calculator.py
-- daily returns, mean, variance, std using for loops
-
-**Confused:**
-- nothing major
+### D1 — Return Calculator
+**Learned:** Python for loops, lists, basic math operations
+**Built:** return_calculator.py — daily returns, mean, variance, std using for loops
+**Confused:** Nothing major
 
 ---
 
-## D2 — NumPy Foundations
-
-**Learned:**
-- NumPy arrays, vectorised returns, log returns
-- Indexing, conditional filtering, win rate
-- Expected value, basic probability, conditional probability
-- English sentences Phase 1 all 5 done
-- Mental math tricks: percentage, multiplication, EV
-
-**Built:**
-- return_calculator_numpy.py
-- max, min, mean, std, win rate, log returns, no for loops
-
-**Confused:**
-- log returns math, e and natural log
-- mental math multiplication still slow
+### D2 — NumPy Foundations
+**Learned:** NumPy arrays, vectorised returns, log returns, indexing, conditional filtering, win rate, expected value, basic probability
+**Built:** return_calculator_numpy.py — max, min, mean, std, win rate, log returns, no for loops
+**Confused:** Log returns math, e and natural log. Mental math multiplication still slow
 
 ---
 
-## D3 — Pandas Basics + DataFrame Operations
-**Learned:**
-- Downloaded real SPY data using yfinance
-- What a DataFrame is and how it differs from NumPy array
-- pct_change() to calculate 1257 daily returns
-- df['column'] syntax and why quotes are needed
-- Plotted closing price and daily returns using matplotlib
-- Saved data to CSV using to_csv()
-- df.shape → rows and columns
-- df.describe() → statistics of all columns
-- df.isnull().sum() → count missing values
-- df.loc[] → select rows by date
-- df.sort_values() → sort by any column
-- df.rolling(20).mean() → 20 day moving average
-- df.resample('ME').sum() → monthly returns
-- df.dropna() → remove missing values
-- Read COVID crash March 2020 in real data
-- Volatility clustering concept
-- [] vs () rule in Pandas
-- ## D4 — Descriptive Stats + SciPy
-**Learned:**
-- What scipy.stats is and why we use it
-- skewness: SPY = -0.54, crashes bigger than rallies
-- kurtosis: SPY = 11.44, extreme days happen far more than normal
-- normality test: p-value = 0.0, SPY confirmed not normal
-- histogram with normal curve overlay
-- density=True to compare histogram and curve on same scale
-- alpha for transparency
-- np.linspace to create smooth curve points
-- stats.norm.pdf to draw perfect normal bell curve
+### D3 — Pandas Basics
+**Learned:** DataFrame operations, pct_change, rolling mean, resample, isnull, loc, sort_values, dropna. Read COVID crash March 2020 in real data
+**Built:** pandas_basics.py — SPY closing price chart, daily returns chart, rolling average chart, 5 worst and best days
+**Confused:** Nothing major
 
-**Built:**
-- stats_report.py
-- histogram of SPY returns with normal curve overlay
-- proved SPY is not normally distributed three ways
+---
 
-**Confused:**
-- nothing major
+### D4 — Descriptive Stats + SciPy
+**Learned:** Skewness, kurtosis, normality test, histogram with normal curve overlay, density=True, np.linspace, stats.norm.pdf
+**Built:** stats_report.py — proved SPY returns not normal three ways. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
+**Confused:** Nothing major
 
-**Built:**
-- pandas_basics.py
-- SPY closing price chart 2020 to 2024
-- SPY daily returns chart
-- SPY returns vs 20 day rolling average chart
-- Found 5 worst and 5 best days in SPY history
+---
 
+### D5 — Hypothesis Testing
+**Learned:** Null hypothesis, t-statistic, p-value, ttest_1samp, f-strings, round()
+**Built:** hypothesis_test.py — tested if SPY mean return differs from zero. t-stat=1.66, p-value=0.096, cannot confirm
+**Confused:** Nothing major
 
-**Confused:**
-- nothing major
+---
 
-- ## D5 — Hypothesis Testing
-**Learned:**
-- What a null hypothesis is
-- t-statistic: how far the mean is from zero in standard errors
-- p-value above 0.05 means result could be luck
-- ttest_1samp from scipy.stats
-- f-strings and round() for printing results
+### D6 — Correlation + OLS Regression
+**Learned:** Correlation direction, SPY vs QQQ=0.93, OLS beta, R-squared, sm.add_constant, residual skew and kurtosis
+**Built:** regression_analysis.py — SPY vs QQQ correlation, OLS regression, scatter plot. Beta=1.13, R-squared=0.87
+**Confused:** Nothing major
 
-**Built:**
-- hypothesis_test.py
-- tested if SPY mean return is different from zero
-- t-stat = 1.66, p-value = 0.096, cannot confirm it is real
+---
 
-**Confused:**
-- nothing major
+### D7 — Time Series + Stationarity
+**Learned:** Stationarity, ADF test, SPY price NOT stationary p=0.948, SPY returns stationary p=0.0, rolling mean and std
+**Built:** stationarity_test.py — ADF test on SPY price and returns, rolling mean and std chart
+**Confused:** Nothing major
 
-- ## D6 — Correlation + OLS Regression
-**Learned:**
-- Correlation measures direction of relationship between two assets
-- SPY vs QQQ correlation = 0.93, very strongly related
-- OLS regression finds exact multiplier, not just direction
-- Beta = 1.13: when SPY moves 1%, QQQ moves 1.13%
-- R-squared = 0.87: SPY explains 87% of QQQ movement
-- P-value = 0.0: relationship is real, not random chance
-- sm.add_constant adds intercept column for alpha calculation
-- Residual skew and kurtosis visible inside model.summary()
+---
 
-**Built:**
-- regression_analysis.py
-- SPY vs QQQ correlation using .corr()
-- OLS regression using statsmodels
-- Scatter plot of daily returns
+### D8 — Multiple Testing Problem
+**Learned:** Why many strategies produce fake signals, Bonferroni correction, new threshold = 0.05 / number of tests
+**Built:** multiple_testing_demo.py — 20 random strategies, Bonferroni applied, 1 fake signal before, 0 after
+**Confused:** Nothing major
 
-**Confused:**
-- nothing major
+---
 
-- ## D7 — Time Series + Stationarity
-**Learned:**
-- What stationarity means and why it matters
-- ADF test using statsmodels adfuller()
-- SPY price is NOT stationary: p-value = 0.948
-- SPY returns ARE stationary: p-value = 0.0
-- Rolling 20-day mean and std using .rolling(20)
-- If you regress two non-stationary series you get fake results
+## Phase 1 — Synthetic Pipeline
 
-**Built:**
-- stationarity_test.py
-- ADF test on SPY price and returns
-- Rolling mean and std chart
+### D1 (Apr 6) — Simple Order Book
+**Learned:** Limit order book structure, bid and ask dictionaries, bid-ask spread, mid price formula, OFI formula
+**Built:** simple_orderbook.py — add_order, mid_price, calculate_ofi functions
+**Confused:** Nothing major
 
-**Confused:**
-- nothing major
+---
 
-- ## D8 — Multiple Testing Problem
-**Learned:**
-- Why testing many strategies always produces fake signals
-- Bonferroni correction: new threshold = 0.05 / number of tests
-- Before correction: 1 strategy looked significant
-- After correction: 0 survived
-- This lesson protects the entire research project
+### D2 (Apr 7) — Synthetic OFI Pipeline
+**Learned:** OFI using delta bid and delta ask, synthetic order book generation, rolling window features, OFI positive=buy pressure, OFI negative=sell pressure
+**Built:** ofi_synthetic.py — synthetic bid/ask sizes, OFI calculation, spread, rolling OFI mean, sum, std
+**Confused:** np.convolve vs pandas rolling. Rolling window meaning in ticks vs days
 
-**Built:**
-- multiple_testing_demo.py
-- 20 random strategies tested
-- Bonferroni correction applied
-- Proved the 1 signal was pure luck
+---
 
-**Confused:**
-- nothing major
-- 
-Apr 3 - R1 - Returned. Reviewed all scripts. 
-Data source decided: Massive..com
-
-## D9 — Simple Order Book (Phase 1 Start)
-**Learned:**
-- What a limit order book is
-- Bid and ask dictionaries
-- Bid-ask spread calculation
-- Mid price formula
-- OFI = sum(bids) - sum(asks)
-
-**Built:**
-- phase1_synthetic_pipeline/simple_orderbook.py
-- add_order function for buy and sell
-- mid_price function
-- calculate_ofi function
-
-**Confused:**
-- nothing major
-- ## D10 — Synthetic OFI + Spread + Rolling Features
-
-**Learned:**
-- Order Flow Imbalance (OFI) using delta bid and delta ask
-- Synthetic order book generation using NumPy
-- Bid size vs ask size interpretation
-- Spread = ask_price − bid_price
-- Rolling window features using pandas rolling()
-- Rolling mean, rolling sum, rolling std
-- Why rolling smooths noisy microstructure signals
-- OFI positive = buy pressure
-- OFI negative = sell pressure
-
-**Built:**
-- ofi_synthetic.py
-- Synthetic bid and ask sizes
-- OFI calculation using diff
-- Synthetic bid and ask prices
-- Spread calculation
-- DataFrame with microstructure features
-- Rolling OFI mean (5,10)
-- Rolling OFI sum
-- Rolling OFI std
-
-**Key Results:**
-- OFI constructed successfully
-- Buy vs sell pressure measured
-- Spread generated realistically
-- Rolling OFI smooth signal created
-
-**Confused:**
-- np.convolve vs pandas rolling
-- Rolling window meaning (ticks vs days)
-
-  ## D11 — Spread Calculator (Phase 1)
-**Learned:**
-- Quoted spread: ask - bid, simplest measure of trading cost
-- Mid price: (bid + ask) / 2
-- Effective spread: 2 * abs(trade_price - mid_price)
-- Effective spread is always smaller than quoted spread
-- Roll spread: estimated from price change autocorrelation alone
-- Autocorrelation: how much today's change predicts tomorrow's direction
-- Negative autocorrelation in prices = bid-ask bounce pattern
-- Plotted two spreads on same chart using matplotlib legend
-
-**Built:**
-- spread_calculator.py
-- Quoted spread, effective spread, Roll spread
-- Comparison chart: quoted vs effective spread
-
-**Confused:**
-- nothing major
+### D3 (Apr 8) — Spread Calculator
+**Learned:** Quoted spread, effective spread, Roll spread, negative autocorrelation reveals bid-ask bounce, mid price
+**Built:** spread_calculator.py — quoted spread, effective spread, Roll spread, comparison chart
+**Confused:** Nothing major
