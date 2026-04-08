@@ -205,3 +205,22 @@ Data source decided: Massive..com
 **Confused:**
 - np.convolve vs pandas rolling
 - Rolling window meaning (ticks vs days)
+
+  ## D11 — Spread Calculator (Phase 1)
+**Learned:**
+- Quoted spread: ask - bid, simplest measure of trading cost
+- Mid price: (bid + ask) / 2
+- Effective spread: 2 * abs(trade_price - mid_price)
+- Effective spread is always smaller than quoted spread
+- Roll spread: estimated from price change autocorrelation alone
+- Autocorrelation: how much today's change predicts tomorrow's direction
+- Negative autocorrelation in prices = bid-ask bounce pattern
+- Plotted two spreads on same chart using matplotlib legend
+
+**Built:**
+- spread_calculator.py
+- Quoted spread, effective spread, Roll spread
+- Comparison chart: quoted vs effective spread
+
+**Confused:**
+- nothing major
