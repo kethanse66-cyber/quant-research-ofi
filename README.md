@@ -21,6 +21,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D1 (Apr 6): Simple order book. add_order, mid_price, calculate_ofi functions
 - D2 (Apr 7): Synthetic OFI pipeline. Bid/ask sizes, OFI, spread, rolling features
 - D3 (Apr 8): Spread calculator. Quoted spread, effective spread, Roll spread. Comparison chart
+- D4 (Apr 9): Tick cleaner. Drop duplicates, remove bad prices, drop zero volume, fill missing timestamps, UTC normalization
 
 ## Files
 
@@ -38,6 +39,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - simple_orderbook.py
 - ofi_synthetic.py
 - spread_calculator.py
+- tick_cleaner.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
