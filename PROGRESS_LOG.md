@@ -78,3 +78,7 @@
 **Learned:** Quoted spread, effective spread, Roll spread, negative autocorrelation reveals bid-ask bounce, mid price
 **Built:** spread_calculator.py — quoted spread, effective spread, Roll spread, comparison chart
 **Confused:** Nothing major
+### D4 (Apr 9) — Tick Cleaner
+**Learned:** Tick data cleaning pipeline, duplicate timestamps, missing price handling, bad price filtering, zero volume filtering, timestamp normalization, UTC **conversion,** resampling to fill missing timestamps
+**Built:** tick_cleaner.py — synthetic tick data, duplicate injection, missing value handling, bad price removal, drop zero volume, resample to 1-second grid, UTC normalization, parquet save
+Confused: Difference between tz_localize vs tz_convert, when to resample vs forward fill
