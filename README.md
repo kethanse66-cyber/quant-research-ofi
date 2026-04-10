@@ -22,6 +22,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D2 (Apr 7): Synthetic OFI pipeline. Bid/ask sizes, OFI, spread, rolling features
 - D3 (Apr 8): Spread calculator. Quoted spread, effective spread, Roll spread. Comparison chart
 - D4 (Apr 9): Tick cleaner. Drop duplicates, remove bad prices, drop zero volume, fill missing timestamps, UTC normalization
+- D5 (Apr 10): Volume bar builder. Volume bars vs time bars comparison.Time bar volume std=8446 vs mean=28951. Volume bars normalize activity per bar.Quote data OFI input. Trade data = price and volume input.
 
 ## Files
 
@@ -40,6 +41,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - ofi_synthetic.py
 - spread_calculator.py
 - tick_cleaner.py
+- volume_bar_builder.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -49,4 +51,8 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Stationarity: required before any regression. ADF test to verify
 - Multiple testing: always apply Bonferroni correction or results are meaningless
 - Beta: sensitivity of one asset to another. SPY vs QQQ beta = 1.13
+- Volume bars: one bar per X shares traded. Equal activity per bar.Better than time bars for microstructure research
+- Trade data: actual transactions. Price and volume per tick
+- Quote data: bid/ask offers. bid_size and ask_size changes → OFI input
+- OHLC: open high low close. Built from compressing ticks. Not used in OFI pipeline
 
