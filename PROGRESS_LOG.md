@@ -64,16 +64,10 @@
 **Learned:** Limit order book structure, bid and ask dictionaries, bid-ask spread, mid price formula, OFI formula
 **Built:** simple_orderbook.py — add_order, mid_price, calculate_ofi functions
 **Confused:** Nothing major
-
----
-
 ### D2 (Apr 7) — Synthetic OFI Pipeline
 **Learned:** OFI using delta bid and delta ask, synthetic order book generation, rolling window features, OFI positive=buy pressure, OFI negative=sell pressure
 **Built:** ofi_synthetic.py — synthetic bid/ask sizes, OFI calculation, spread, rolling OFI mean, sum, std
 **Confused:** np.convolve vs pandas rolling. Rolling window meaning in ticks vs days
-
----
-
 ### D3 (Apr 8) — Spread Calculator
 **Learned:** Quoted spread, effective spread, Roll spread, negative autocorrelation reveals bid-ask bounce, mid price
 **Built:** spread_calculator.py — quoted spread, effective spread, Roll spread, comparison chart
@@ -82,3 +76,11 @@
 **Learned:** Tick data cleaning pipeline, duplicate timestamps, missing price handling, bad price filtering, zero volume filtering, timestamp normalization, UTC **conversion,** resampling to fill missing timestamps
 **Built:** tick_cleaner.py — synthetic tick data, duplicate injection, missing value handling, bad price removal, drop zero volume, resample to 1-second grid, UTC normalization, parquet save
 Confused: Difference between tz_localize vs tz_convert, when to resample vs forward fill
+### D5 (Apr 10) — Volume Bar Builder
+**Learned:** Time bars vs volume bars difference, OHLC construction from ticks,
+volume bars normalize market activity, quote data vs trade data difference,
+Polygon gives two separate files — quotes for OFI, trades for price and volume,
+bid_size and ask_size are orders waiting in book not volume traded
+**Built:** volume_bar_builder.py — volume bars with VWAP and total volume,
+time bars with OHLC for comparison, volume stats comparison
+**Confused:** Nothing major
