@@ -1,88 +1,113 @@
+# ofi_synthetic.py
+# Generates synthetic order book data and validates the OFI pipeline.
+# Reference: Cont, Kukanov & Stoikov (2014)
+
 import numpy as np
 import pandas as pd
 
-# reproducibility
 np.random.seed(42)
+N = 500
 
-# -----------------------------
-# Synthetic order book sizes
-# -----------------------------
-n = 100
 
-bid_size = np.random.randint(100, 1000, size=n)
-ask_size = np.random.randint(100, 1000, size=n)
+def generate_synthetic_book(n, signal_strength=0.3):
+    """Fake order book data with a small OFI signal baked in."""
 
-print("Bid size:", bid_size[:5])
-print("Ask size:", ask_size[:5])
+    bid_size = np.random.randint(100, 1000, size=n)
+    ask_size = np.random.randint(100, 1000, size=n)
 
-# -----------------------------
-# OFI calculation
-# -----------------------------
-delta_bid = np.diff(bid_size)
-delta_ask = np.diff(ask_size)
+    ofi_raw = np.diff(bid_size) - np.diff(ask_size)
+    ofi_signal = np.append(0, ofi_raw)
+    ofi_norm = ofi_signal / (np.abs(ofi_signal).max() + 1e-9)
 
-ofi = delta_bid - delta_ask
+    ofi_lagged = np.roll(ofi_norm, 1)
+    ofi_lagged[0] = 0
 
-print("\nOFI first 10 values:", ofi[:10])
-print("Mean OFI:", round(ofi.mean(), 2))
-print("Std OFI:", round(ofi.std(), 2))
-print("% Buy pressure:", round((ofi > 0).mean() * 100, 2), "%")
+    noise = np.random.randn(n) * 0.05
+    price_innovations = signal_strength * ofi_lagged + (1 - signal_strength) * noise
 
-# -----------------------------
-# Synthetic prices
-# -----------------------------
-bid_prices = np.round(100 + np.random.randn(n).cumsum() * 0.1, 2)
-ask_prices = np.round(bid_prices + np.random.uniform(0.01, 0.05, size=n), 2)
+    bid_prices = np.round(100 + np.cumsum(price_innovations) * 0.1, 4)
+    ask_prices = np.round(bid_prices + np.random.uniform(0.01, 0.05, size=n), 4)
 
-print("\nBid price:", bid_prices[:5])
-print("Ask price:", ask_prices[:5])
+    weighted_mid = (bid_size * ask_prices + ask_size * bid_prices) / (bid_size + ask_size)
 
-# -----------------------------
-# Spread calculation
-# -----------------------------
-spread = np.round(ask_prices - bid_prices, 4)
+    return pd.DataFrame({
+        "bid_price":    bid_prices,
+        "ask_price":    ask_prices,
+        "bid_size":     bid_size,
+        "ask_size":     ask_size,
+        "spread":       np.round(ask_prices - bid_prices, 4),
+        "mid_price":    np.round((bid_prices + ask_prices) / 2, 4),
+        "weighted_mid": np.round(weighted_mid, 4),
+    })
 
-print("\nSpread first 10:", spread[:10])
-print("Mean spread:", round(spread.mean(), 4))
-print("Std spread:", round(spread.std(), 4))
 
-# -----------------------------
-# Create DataFrame
-# -----------------------------
-df = pd.DataFrame({
-    "bid_price": bid_prices,
-    "ask_price": ask_prices,
-    "bid_size": bid_size,
-    "ask_size": ask_size,
-    "spread": spread,
-    "ofi": np.append(np.nan, ofi)
-})
+def compute_ofi(df):
+    """Best-touch OFI with price-change reset (Cont et al. 2014)."""
 
-# -----------------------------
-# Rolling features
-# -----------------------------
-df["ofi_roll_mean_10"] = df["ofi"].rolling(10).mean()
-df["ofi_roll_sum_10"] = df["ofi"].rolling(10).sum()
-df["ofi_roll_std_10"] = df["ofi"].rolling(10).std()
+    bid_change = df["bid_size"].diff()
+    ask_change = df["ask_size"].diff()
 
-df["ofi_roll_mean_5"] = df["ofi"].rolling(5).mean()
+    # if best price changes → previous queue is gone
+    bid_price_change = df["bid_price"] != df["bid_price"].shift(1)
+    ask_price_change = df["ask_price"] != df["ask_price"].shift(1)
 
-# -----------------------------
-# Output
-# -----------------------------
-print("\nData preview:")
-print(df.head(15))
-# -----------------------------
-# Mid price + returns
-# -----------------------------
-df["mid_price"] = (df["bid_price"] + df["ask_price"]) / 2
-df["mid_return"] = df["mid_price"].pct_change()
-df["future_mid_return"] = df["mid_return"].shift(-1)
+    bid_change[bid_price_change] = df["bid_size"][bid_price_change]
+    ask_change[ask_price_change] = df["ask_size"][ask_price_change]
 
-# -----------------------------
-# IC calculation
-# -----------------------------
-ic = df["ofi"].corr(df["future_mid_return"])
-print("OFI IC:", ic)
+    return bid_change - ask_change
 
-print(df[["ofi","mid_price","mid_return","future_mid_return"]].head(10))
+
+def add_rolling_features(df, windows=(5, 10)):
+    """Add rolling OFI features."""
+
+    for w in windows:
+        df[f"ofi_mean_{w}"] = df["ofi"].rolling(w).mean()
+        df[f"ofi_std_{w}"]  = df["ofi"].rolling(w).std()
+        df[f"ofi_sum_{w}"]  = df["ofi"].rolling(w).sum()
+
+    return df
+
+
+def compute_forward_return(df, horizon=1):
+    """Forward weighted mid return."""
+    return df["weighted_mid"].pct_change().shift(-horizon)
+
+
+def compute_ic(signal, forward_return):
+    """Spearman IC."""
+    combined = pd.concat([signal, forward_return], axis=1).dropna()
+    return combined.iloc[:, 0].corr(combined.iloc[:, 1], method="spearman")
+
+
+if __name__ == "__main__":
+    df = generate_synthetic_book(N, signal_strength=0.3)
+
+    df["ofi"] = compute_ofi(df)
+
+    df = add_rolling_features(df, windows=(5, 10))
+
+    df["future_return"] = compute_forward_return(df, horizon=1)
+
+    print("=== Synthetic Book — First 5 Rows ===")
+    print(df[["bid_price", "ask_price", "bid_size", "ask_size",
+              "spread", "mid_price", "weighted_mid"]].head())
+
+    print("\n=== OFI Summary ===")
+    ofi_clean = df["ofi"].dropna()
+    print(f"Mean OFI        : {ofi_clean.mean():.2f}")
+    print(f"Std OFI         : {ofi_clean.std():.2f}")
+    print(f"% buy pressure  : {(ofi_clean > 0).mean() * 100:.1f}%")
+
+    print("\n=== IC Validation (Spearman) ===")
+    ic_raw = compute_ic(df["ofi"], df["future_return"])
+    ic_5   = compute_ic(df["ofi_mean_5"], df["future_return"])
+    ic_10  = compute_ic(df["ofi_mean_10"], df["future_return"])
+
+    print(f"IC raw OFI      : {ic_raw:.4f}")
+    print(f"IC 5-bar mean   : {ic_5:.4f}")
+    print(f"IC 10-bar mean  : {ic_10:.4f}")
+
+    if ic_raw > 0.05:
+        print("\nPASS — injected signal detectable. Pipeline correctly aligned.")
+    else:
+        print("\nWARN — IC near zero. Check lag alignment or look-ahead bias.")
