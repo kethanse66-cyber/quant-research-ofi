@@ -80,6 +80,15 @@ Confused: Difference between tz_localize vs tz_convert, when to resample vs forw
 **Learned:** Time bars vs volume bars difference, OHLC construction from ticks,
 volume bars normalize market activity, quote data vs trade data difference,
 Polygon gives two separate files — quotes for OFI, trades for price and volume,
+### D6 (Apr 11) — Saturday Review
+**Learned:** Review day — no new file
+**Built:** Nothing new — review and GitHub push day
+**Confused:** Nothing major
+
+### D7 (Apr 13) — Trade Imbalance
+**Learned:** Lee-Ready rule to classify trades as buy or sell, volume-weighted trade imbalance, rolling window imbalance, why we use volume not just count, direction +1/-1/0 meaning
+**Built:** trade_imbalance.py — classify_trade function, trade_imbalance function, rolling buy/sell volume, imbalance formula (buys-sells)/(buys+sells)
+**Confused:** nested np.where syntax, why direction=0 at mid price
 bid_size and ask_size are orders waiting in book not volume traded
 **Built:** volume_bar_builder.py — volume bars with VWAP and total volume,
 time bars with OHLC for comparison, volume stats comparison
