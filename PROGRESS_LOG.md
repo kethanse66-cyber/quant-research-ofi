@@ -93,3 +93,8 @@ bid_size and ask_size are orders waiting in book not volume traded
 **Built:** volume_bar_builder.py — volume bars with VWAP and total volume,
 time bars with OHLC for comparison, volume stats comparison
 **Confused:** Nothing major
+
+### D8 (Apr 14): Feature Library
+**Learned:** Microprice weighted by bid/ask size, spread change as liquidity signal, OFI normalization using rolling standard deviation, why normalization stabilizes scale across time  
+**Built:** feature_library.py — compute_ofi function, microprice, spread change, normalized OFI features  
+**Confused:** Why normalize OFI and not use raw OFI
