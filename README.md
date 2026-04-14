@@ -22,9 +22,11 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D2 (Apr 7): Synthetic OFI pipeline. Bid/ask sizes, OFI, spread, rolling features
 - D3 (Apr 8): Spread calculator. Quoted spread, effective spread, Roll spread. Comparison chart
 - D4 (Apr 9): Tick cleaner. Drop duplicates, remove bad prices, drop zero volume, fill missing timestamps, UTC normalization
-- D5 (Apr 10): Volume bar builder. Volume bars vs time bars comparison.Time bar volume std=8446 vs mean=28951. Volume bars normalize activity per bar.Quote data OFI input. Trade data = price and volume input.
+- D5 (Apr 10): Volume bar builder. Volume bars vs time bars comparison.Time bar volume std=8446 vs mean=28951. Volume bars normalize activity per bar.Quote data      OFI input. Trade data = price and volume input.
 - D6 (Apr 11): Saturday review day. No new file. GitHub push and cleanup
 - D7 (Apr 13): Trade imbalance. Lee-Ready classification. Volume-weighted rolling imbalance. Range -1 to +1
+- D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. 
+  Weighted mid-price using queue sizes. OFI normalized using rolling std.
 
 ## Files
 
@@ -45,6 +47,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - tick_cleaner.py
 - volume_bar_builder.py
 - trade_imbalance.py
+- feature_library.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -60,4 +63,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - OHLC: open high low close. Built from compressing ticks. Not used in OFI pipeline
 -Trade imbalance: (buy_vol - sell_vol) / (buy_vol + sell_vol). Range -1 to +1. Measures directional volume pressure
 - Lee-Ready rule: trade above mid = buy (+1). Trade below mid = sell (-1). Trade at mid = neutral (0)
+- Microprice: weighted mid price using queue sizes. Closer to side with larger size
+- Spread change: change in ask-bid spread. Measures liquidity tightening/widening
+- Normalized OFI: OFI divided by rolling std. Measures imbalance strength relative to recent history
 
