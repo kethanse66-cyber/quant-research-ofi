@@ -25,9 +25,8 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D5 (Apr 10): Volume bar builder. Volume bars vs time bars comparison.Time bar volume std=8446 vs mean=28951. Volume bars normalize activity per bar.Quote data      OFI input. Trade data = price and volume input.
 - D6 (Apr 11): Saturday review day. No new file. GitHub push and cleanup
 - D7 (Apr 13): Trade imbalance. Lee-Ready classification. Volume-weighted rolling imbalance. Range -1 to +1
-- D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. 
-  Weighted mid-price using queue sizes. OFI normalized using rolling std.
-
+- D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. Weighted mid-price using queue sizes. OFI normalized using rolling std.
+- D9 (Apr 15): Queue imbalance. Best level formula. Edge case tests. Level 1 only for Polygon data.
 ## Files
 
 ### phase0_foundations/
@@ -48,6 +47,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - volume_bar_builder.py
 - trade_imbalance.py
 - feature_library.py
+- queue_imbalance.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -66,4 +66,5 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Microprice: weighted mid price using queue sizes. Closer to side with larger size
 - Spread change: change in ask-bid spread. Measures liquidity tightening/widening
 - Normalized OFI: OFI divided by rolling std. Measures imbalance strength relative to recent history
+- Queue imbalance: (bid_size - ask_size) / (bid_size + ask_size). Range -1 to +1. Measures directional pressure at best level
 
