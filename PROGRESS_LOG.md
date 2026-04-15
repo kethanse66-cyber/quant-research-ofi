@@ -98,3 +98,8 @@ time bars with OHLC for comparison, volume stats comparison
 **Learned:** Microprice weighted by bid/ask size, spread change as liquidity signal, OFI normalization using rolling standard deviation, why normalization stabilizes scale across time  
 **Built:** feature_library.py — compute_ofi function, microprice, spread change, normalized OFI features  
 **Confused:** Why normalize OFI and not use raw OFI
+
+### D9 (Apr 15): Queue Imbalance
+**Learned:** Queue imbalance at best level, why Level 1 only matters for Polygon data, edge case handling with np.where
+**Built:** queue_imbalance.py — queue_imbalance_best function, edge case tests for bid=0 ask=0
+**Confused:** Nothing major
