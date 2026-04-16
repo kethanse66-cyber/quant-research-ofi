@@ -103,3 +103,10 @@ time bars with OHLC for comparison, volume stats comparison
 **Learned:** Queue imbalance at best level, why Level 1 only matters for Polygon data, edge case handling with np.where
 **Built:** queue_imbalance.py — queue_imbalance_best function, edge case tests for bid=0 ask=0
 **Confused:** Nothing major
+
+### D10 (Apr 16): OFI Full Analysis  
+**Learned:** Multi-horizon OFI at 30s, 1min, 5min bars, autocorrelation, ADF stationarity test, Information Coefficient (IC), lagged OFI avoids look-ahead bias  
+**Built:** ofi_full.py — tick-level OFI, horizon resampling, ACF analysis, ADF test, IC calculation, visualization dashboard  
+**Confused:** Why shorter or longer time horizons give different IC results
+
+
