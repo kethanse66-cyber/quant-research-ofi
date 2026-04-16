@@ -27,6 +27,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D7 (Apr 13): Trade imbalance. Lee-Ready classification. Volume-weighted rolling imbalance. Range -1 to +1
 - D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. Weighted mid-price using queue sizes. OFI normalized using rolling std.
 - D9 (Apr 15): Queue imbalance. Best level formula. Edge case tests. Level 1 only for Polygon data.
+- D10 (Apr 16): Multi-horizon OFI (30s / 1min / 5min), ACF, ADF stationarity, Information Coefficient, visualization dashboard
 ## Files
 
 ### phase0_foundations/
@@ -48,6 +49,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - trade_imbalance.py
 - feature_library.py
 - queue_imbalance.py
+- ofi_full.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -67,4 +69,9 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Spread change: change in ask-bid spread. Measures liquidity tightening/widening
 - Normalized OFI: OFI divided by rolling std. Measures imbalance strength relative to recent history
 - Queue imbalance: (bid_size - ask_size) / (bid_size + ask_size). Range -1 to +1. Measures directional pressure at best level
+- Multi-horizon OFI: OFI tested at 30s, 1min, 5min bars
+- ACF: checks if OFI continues or reverses over time
+- ADF test: checks if OFI is stationary
+- IC: correlation between OFI and future returns
+- Lagged OFI: previous OFI used to avoid look-ahead bias
 
