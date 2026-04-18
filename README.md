@@ -28,6 +28,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. Weighted mid-price using queue sizes. OFI normalized using rolling std.
 - D9 (Apr 15): Queue imbalance. Best level formula. Edge case tests. Level 1 only for Polygon data.
 - D10 (Apr 16): Multi-horizon OFI (30s / 1min / 5min), ACF, ADF stationarity, Information Coefficient, visualization dashboard
+- D11 (Apr 17): Feature normalizer. Rank transform, z-score, min-max with rolling window support. Rank transform chosen for HMM — removes fat-tail shape. Audit function shows skew and kurtosis before vs after.
 ## Files
 
 ### phase0_foundations/
@@ -50,6 +51,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - feature_library.py
 - queue_imbalance.py
 - ofi_full.py
+- feature_normalizer.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -74,4 +76,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - ADF test: checks if OFI is stationary
 - IC: correlation between OFI and future returns
 - Lagged OFI: previous OFI used to avoid look-ahead bias
-
+- Rank transform: convert values to percentile ranks 0-1. Removes distributional shape. Preferred before HMM fitting
+- Z-score: (x - mean) / std. Mean=0, std=1 but unbounded. Outliers remain
+- Min-max: (x - min) / (max - min). Bounded [0,1] but sensitive to outliers
+- Rolling normalization: use only past window of data. Avoids look-ahead bias in live pipeline
