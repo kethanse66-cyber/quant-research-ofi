@@ -109,4 +109,9 @@ time bars with OHLC for comparison, volume stats comparison
 **Built:** ofi_full.py — tick-level OFI, horizon resampling, ACF analysis, ADF test, IC calculation, visualization dashboard  
 **Confused:** Why shorter or longer time horizons give different IC results
 
+### D11 (Apr 17): Feature Normalizer
+**Learned:** Three normalization methods — rank transform, z-score, min-max. Rolling window versions avoid look-ahead bias. Rank transform preferred before HMM because OFI is fat-tailed and skewed — rank removes the distributional shape entirely. Z-score and min-max preserve the original skew.
+**Built:** feature_normalizer.py — zscore_normalize, minmax_normalize, rank_transform (full sample + rolling), normalize_features wrapper for full DataFrame, normalization_audit for before/after stats
+**Confused:** Nothing major
+
 
