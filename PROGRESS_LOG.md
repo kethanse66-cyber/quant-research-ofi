@@ -121,6 +121,6 @@ Last N rows get NaN because no future rows exist after them.
 Index frequency check confirms all rows are exactly 10s apart — critical for correct shift numbers.
 Log returns used instead of raw price difference because comparable across all tickers.
 **Built:** target_variable.py — compute_log_returns function, parameterized horizons dictionary, index frequency validation, NaN count test
-**Confused:** NaN concept took time — understood finally through apple box example
+**Confused:** NaN concept took time — understood
 
 
