@@ -29,6 +29,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D9 (Apr 15): Queue imbalance. Best level formula. Edge case tests. Level 1 only for Polygon data.
 - D10 (Apr 16): Multi-horizon OFI (30s / 1min / 5min), ACF, ADF stationarity, Information Coefficient, visualization dashboard
 - D11 (Apr 17): Feature normalizer. Rank transform, z-score, min-max with rolling window support. Rank transform chosen for HMM — removes fat-tail shape. Audit function shows skew and kurtosis before vs after.
+-  D13 (Apr 20): Target variable. Log returns at 10s, 1min, 5min horizons. Parameterized horizons dict. Index frequency validation. NaN count confirmed correct.
 ## Files
 
 ### phase0_foundations/
@@ -52,6 +53,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - queue_imbalance.py
 - ofi_full.py
 - feature_normalizer.py
+- target_variable.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -76,6 +78,11 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - ADF test: checks if OFI is stationary
 - IC: correlation between OFI and future returns
 - Lagged OFI: previous OFI used to avoid look-ahead bias
+- - Target variable: log(price_t+n / price_t). What price actually did n seconds later. Model predicts this using OFI
+- Log returns: log(future/current). Stationary and comparable across tickers. Raw price difference is neither
+- shift(-n): looks n rows ahead. Rows not seconds. 1min = shift(-6) only if each row = 10 seconds
+- Index frequency check: confirms row spacing before trusting shift numbers. Critical for real Polygon data
+- NaN in targets: last N rows have no future data. Dropped before model training. Not an error
 - Rank transform: convert values to percentile ranks 0-1. Removes distributional shape. Preferred before HMM fitting
 - Z-score: (x - mean) / std. Mean=0, std=1 but unbounded. Outliers remain
 - Min-max: (x - min) / (max - min). Bounded [0,1] but sensitive to outliers
