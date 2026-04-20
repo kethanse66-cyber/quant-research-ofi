@@ -114,4 +114,13 @@ time bars with OHLC for comparison, volume stats comparison
 **Built:** feature_normalizer.py — zscore_normalize, minmax_normalize, rank_transform (full sample + rolling), normalize_features wrapper for full DataFrame, normalization_audit for before/after stats
 **Confused:** Nothing major
 
+### D13 (Apr 20): Target Variable
+**Learned:** Log returns at 3 horizons — 10s, 1min, 5min. shift(-n) works in rows not seconds. 
+1 row = 10 seconds so 1min = shift(-6), 5min = shift(-30). 
+Last N rows get NaN because no future rows exist after them. 
+Index frequency check confirms all rows are exactly 10s apart — critical for correct shift numbers.
+Log returns used instead of raw price difference because comparable across all tickers.
+**Built:** target_variable.py — compute_log_returns function, parameterized horizons dictionary, index frequency validation, NaN count test
+**Confused:** NaN concept took time — understood finally through apple box example
+
 
