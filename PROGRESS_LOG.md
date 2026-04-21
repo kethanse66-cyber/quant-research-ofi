@@ -123,4 +123,16 @@ Log returns used instead of raw price difference because comparable across all t
 **Built:** target_variable.py — compute_log_returns function, parameterized horizons dictionary, index frequency validation, NaN count test
 **Confused:** NaN concept took time — understood
 
+### D14 (Apr 21): Lag Features
+**Learned:** Lag features shift every feature back by 1,2,3 rows so model only sees 
+past data at time T. shift(1) on rolling std and mean avoids look-ahead bias in 
+normalization. dropna on lag_cols + target together ensures both features and target 
+are valid. model_df has 470 rows after dropping NaN warmup rows. first valid prediction 
+row = 9:34:00. lag captures OFI persistence — 3 consecutive high OFI readings stronger 
+signal than one spike. queue_imbalance captures sitting orders not traded volume. 
+two separate signals — queue_imbalance = intention, trade_imbalance = action.
+**Built:** lag_features.py — create_lag_features function, shift(1) rolling normalization, 
+explicit dropna on lag and target cols, first valid prediction timestamp printed
+**Confused:** Nothing major 
+ 
 
