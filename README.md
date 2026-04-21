@@ -30,6 +30,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D10 (Apr 16): Multi-horizon OFI (30s / 1min / 5min), ACF, ADF stationarity, Information Coefficient, visualization dashboard
 - D11 (Apr 17): Feature normalizer. Rank transform, z-score, min-max with rolling window support. Rank transform chosen for HMM — removes fat-tail shape. Audit function shows skew and kurtosis before vs after.
 -  D13 (Apr 20): Target variable. Log returns at 10s, 1min, 5min horizons. Parameterized horizons dict. Index frequency validation. NaN count confirmed correct.
+- D14 (Apr 21): Lag features. shift(1,2,3) on all features. Rolling normalization with shift(1) to avoid look-ahead bias.
 ## Files
 
 ### phase0_foundations/
@@ -54,6 +55,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - ofi_full.py
 - feature_normalizer.py
 - target_variable.py
+- lag_features.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -87,3 +89,9 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Z-score: (x - mean) / std. Mean=0, std=1 but unbounded. Outliers remain
 - Min-max: (x - min) / (max - min). Bounded [0,1] but sensitive to outliers
 - Rolling normalization: use only past window of data. Avoids look-ahead bias in live pipeline
+- - Lag features: shift(n) on features so model sees only past data. Captures OFI persistence
+- shift(1) on rolling: use only prior window for normalization. Avoids look-ahead bias
+- model_df: clean DataFrame after dropna. Both features and target valid. Ready for training
+- Queue imbalance vs trade imbalance: queue = sitting orders = intention. trade = executed orders = action
+- Signal decay: OFI predicts returns best at short horizons. Decays over time. ACF measures this
+- Liquidity sweep: institution sells to trigger retail stops, buys back cheaper. OFI spikes before price moves
