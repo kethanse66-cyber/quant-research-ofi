@@ -134,5 +134,19 @@ two separate signals — queue_imbalance = intention, trade_imbalance = action.
 **Built:** lag_features.py — create_lag_features function, shift(1) rolling normalization, 
 explicit dropna on lag and target cols, first valid prediction timestamp printed
 **Confused:** Nothing major 
+
+### D15 (Apr 22): Audit Pipeline
+**Learned:** Look-ahead audit logic — shift(1) on features means row 0 of df_model 
+must equal raw row 0 of df_raw. After shift(1) and dropna(), first valid prediction 
+row is 09:31am not 09:30am. Two rows dropped total — first row has NaN features, 
+last row has NaN target from shift(-1). Correct lag validation compares 
+df_model.iloc[0] against df_raw.iloc[0] not df_raw.iloc[1]. 
+dropna() must be applied after both feature lagging and target computation together.
+**Built:** audit_pipeline.py — feature lag audit, row0 NaN check, correct lag 
+validation comparing raw row0 vs lagged row0, dropna fix, first prediction 
+timestamp print, all features PASS confirmed
+**Confused:** shift(1) direction took time — understood. microprice used as price 
+reference for target because most accurate price estimate available in synthetic data. 
+Phase 2 will use actual Polygon trade price instead.
  
 
