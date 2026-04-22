@@ -31,6 +31,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D11 (Apr 17): Feature normalizer. Rank transform, z-score, min-max with rolling window support. Rank transform chosen for HMM — removes fat-tail shape. Audit function shows skew and kurtosis before vs after.
 -  D13 (Apr 20): Target variable. Log returns at 10s, 1min, 5min horizons. Parameterized horizons dict. Index frequency validation. NaN count confirmed correct.
 - D14 (Apr 21): Lag features. shift(1,2,3) on all features. Rolling normalization with shift(1) to avoid look-ahead bias.
+- D15 (Apr 22): Audit pipeline. Look-ahead audit on all features. Lag validation confirmed — df_model.iloc[0] matches df_raw.iloc[0]. All features PASS. 2 rows dropped — first row NaN features, last row NaN target. First valid prediction row 09:31am.
 ## Files
 
 ### phase0_foundations/
@@ -56,6 +57,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - feature_normalizer.py
 - target_variable.py
 - lag_features.py
+- audit_pipeline.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -95,3 +97,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Queue imbalance vs trade imbalance: queue = sitting orders = intention. trade = executed orders = action
 - Signal decay: OFI predicts returns best at short horizons. Decays over time. ACF measures this
 - Liquidity sweep: institution sells to trigger retail stops, buys back cheaper. OFI spikes before price moves
+- - Look-ahead audit: check row 0 of every lagged feature is NaN before dropna. After dropna, verify df_model.iloc[0] equals df_raw.iloc[0]
+- dropna(): removes first row (NaN features from shift(1)) and last row (NaN target from shift(-1)). Applied after both feature lagging and target computation
+- First valid prediction row: first timestamp where both features and target are valid. Always one row after raw row 0
+- Lag validation: df_model.iloc[0][feature] must equal df_raw.iloc[0][feature]. Confirms shift worked correctly
