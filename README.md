@@ -32,6 +32,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 -  D13 (Apr 20): Target variable. Log returns at 10s, 1min, 5min horizons. Parameterized horizons dict. Index frequency validation. NaN count confirmed correct.
 - D14 (Apr 21): Lag features. shift(1,2,3) on all features. Rolling normalization with shift(1) to avoid look-ahead bias.
 - D15 (Apr 22): Audit pipeline. Look-ahead audit on all features. Lag validation confirmed — df_model.iloc[0] matches df_raw.iloc[0]. All features PASS. 2 rows dropped — first row NaN features, last row NaN target. First valid prediction row 09:31am.
+- D16 (Apr 23): Save to Parquet. CSV vs Parquet benchmark — 2x smaller, 2x faster write. float32 optimization. snappy compression. UTC timestamps. Exception handling. Verify round-trip confirmed 100k rows clean.
 ## Files
 
 ### phase0_foundations/
@@ -58,6 +59,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - target_variable.py
 - lag_features.py
 - audit_pipeline.py
+- save_to_parquet.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -101,3 +103,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - dropna(): removes first row (NaN features from shift(1)) and last row (NaN target from shift(-1)). Applied after both feature lagging and target computation
 - First valid prediction row: first timestamp where both features and target are valid. Always one row after raw row 0
 - Lag validation: df_model.iloc[0][feature] must equal df_raw.iloc[0][feature]. Confirms shift worked correctly
+- Parquet: columnar storage. Reads one column without loading others. 
+  2x smaller than CSV. snappy compression. Standard for tick data.
+- float32: halves memory vs float64. Sufficient precision for OFI features.
+- perf_counter: most precise Python timer. Use for benchmarking over time.timev
