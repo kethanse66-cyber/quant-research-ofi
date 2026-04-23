@@ -148,5 +148,13 @@ timestamp print, all features PASS confirmed
 **Confused:** shift(1) direction took time — understood. microprice used as price 
 reference for target because most accurate price estimate available in synthetic data. 
 Phase 2 will use actual Polygon trade price instead.
+
+### D16 (Apr 23): Save to Parquet
+**Learned:** Parquet saves by column not row — reads faster and uses less disk than CSV.
+float32 halves memory vs float64. snappy compression built into Parquet write.
+UTC timezone must be set at timestamp creation and survives save/load correctly.
+perf_counter more precise than time.time for benchmarking.
+Benchmark on 100k rows: Parquet 2x smaller (9.5MB vs 19.8MB), writes 2x faster.
+CSV reads faster on small data — flips at large scale.
  
 
