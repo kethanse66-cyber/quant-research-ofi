@@ -156,5 +156,17 @@ UTC timezone must be set at timestamp creation and survives save/load correctly.
 perf_counter more precise than time.time for benchmarking.
 Benchmark on 100k rows: Parquet 2x smaller (9.5MB vs 19.8MB), writes 2x faster.
 CSV reads faster on small data — flips at large scale.
- 
+
+ ### D17 (Apr 24): Pipeline Test
+**Learned:** Full OFI formula from Cont et al. 2014 — handles bid/ask price changes 
+and queue depletion, not just size diff. GARCH-like synthetic vol clustering, spread 
+widening in high vol regimes, volume bursts. Unit tests with assert catch silent bugs. 
+IC measures per-feature predictive power. Ridge combines all features with optimal weights. 
+Scaler fit on train only — never on test. shift(1) on features = past data only. 
+shift(-n) on target = future return. R² negative on synthetic data expected — 
+no real institutional order flow in random data.
+**Built:** pipeline_test.py — full end-to-end pipeline test. 6 unit tests all PASS. 
+IC analysis all 16 features. Ridge baseline OOS IC=0.016, R²=-0.17. 
+Parquet save and reload verified. Pipeline completes in 22 seconds.
+**Confused:** Nothing major
 
