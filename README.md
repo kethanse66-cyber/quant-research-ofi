@@ -33,6 +33,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D14 (Apr 21): Lag features. shift(1,2,3) on all features. Rolling normalization with shift(1) to avoid look-ahead bias.
 - D15 (Apr 22): Audit pipeline. Look-ahead audit on all features. Lag validation confirmed — df_model.iloc[0] matches df_raw.iloc[0]. All features PASS. 2 rows dropped — first row NaN features, last row NaN target. First valid prediction row 09:31am.
 - D16 (Apr 23): Save to Parquet. CSV vs Parquet benchmark — 2x smaller, 2x faster write. float32 optimization. snappy compression. UTC timestamps. Exception handling. Verify round-trip confirmed 100k rows clean.
+- D17 (Apr 24): Pipeline test. Full end-to-end synthetic pipeline.  6 unit tests PASS. IC analysis 16 features. Ridge baseline OOS IC=0.016. Parquet 0.2MB, 1000 rows, 25 columns. Pipeline runs in 22 seconds.Full OFI formula with price change and queue depletion handling.
 ## Files
 
 ### phase0_foundations/
@@ -60,6 +61,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - lag_features.py
 - audit_pipeline.py
 - save_to_parquet.py
+- pipline_test.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -107,3 +109,11 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
   2x smaller than CSV. snappy compression. Standard for tick data.
 - float32: halves memory vs float64. Sufficient precision for OFI features.
 - perf_counter: most precise Python timer. Use for benchmarking over time.timev
+- - Full OFI formula: price changes + queue depletion + size changes. Not just size diff
+- Unit tests: assert catches silent bugs before they reach model
+- IC: rank correlation between feature and future returns. Higher = better predictor
+- Ridge combines all 16 features with optimal weights. IC just ranks them individually
+- Scaler fit on train only — fit on test = future leakage
+- shift(1) features = past data only. shift(-n) target = future return
+  
+- 
