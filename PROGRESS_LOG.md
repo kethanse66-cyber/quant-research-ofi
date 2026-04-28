@@ -170,3 +170,7 @@ IC analysis all 16 features. Ridge baseline OOS IC=0.016, R²=-0.17.
 Parquet save and reload verified. Pipeline completes in 22 seconds.
 **Confused:** Nothing major
 
+#### D19: data_pipeline - Massive API download script + pipeline ready
+
+
+#### D20: data_download - VM1 SPY+IWM+XLE+XLV+TLT quotes+trades downloading
