@@ -174,3 +174,6 @@ Parquet save and reload verified. Pipeline completes in 22 seconds.
 
 
 #### D20: data_download - VM1 SPY+IWM+XLE+XLV+TLT quotes+trades downloading
+
+#### D21: data download-vm1 QQQ+XLF+XLK+AAPL+JPM+NVDA downloading
+
