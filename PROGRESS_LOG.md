@@ -177,3 +177,18 @@ Parquet save and reload verified. Pipeline completes in 22 seconds.
 
 #### D21: data download-vm1 QQQ+XLF+XLK+AAPL+JPM+NVDA downloading
 
+## Phase 4 — HMM Regime Detection
+
+### D1 (May 4) — 2-State HMM
+**Learned:** HMM has 3 components — states (hidden regimes), emissions (what each state looks like), transitions (how states switch). Baum-Welch learns parameters from data. Viterbi labels each time point. Volatility regimes are sticky — once stressed, stays stressed. Transition matrix shows 99.72% chance of staying in same state.
+**Built:** hmm_2state.py — GaussianHMM 2 states on SPY realized volatility. State 0 = Low Vol, State 1 = High Vol. Transition matrix. Regime plot saved to reports/hmm_2state_regimes.png
+**Results:** Low Vol mean=0.0718, High Vol mean=0.1998. Regimes visually match volatile periods in chart. High vol spike visible March-May 2025.
+**Confused:** Nothing major
+
+### D2 (May 5) — 3-State HMM
+**Learned:** Adding a third state doesn't always help. When two states have nearly identical means, HMM is splitting noise not finding real regimes. Need more features — OFI and spread — to make 3 states meaningful. BIC/AIC model selection required before choosing state count.
+**Built:** hmm_3state.py — GaussianHMM 3 states on SPY realized volatility. Low Vol, Medium Vol, High Vol labels. Regime characterization table. Transition matrix.
+**Results:** Low Vol mean=0.0718 (34.9%), Medium Vol mean=0.0719 (34.9%), High Vol mean=0.1998 (30.2%). Low and Medium Vol nearly identical — 3 states not justified on realized vol alone.
+**Confused:** Nothing major
+**Key Finding:** 2-state HMM better than 3-state when using realized volatility as single feature. Multi-feature HMM needed for meaningful 3-state separation.
+
