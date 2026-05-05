@@ -34,6 +34,12 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D15 (Apr 22): Audit pipeline. Look-ahead audit on all features. Lag validation confirmed — df_model.iloc[0] matches df_raw.iloc[0]. All features PASS. 2 rows dropped — first row NaN features, last row NaN target. First valid prediction row 09:31am.
 - D16 (Apr 23): Save to Parquet. CSV vs Parquet benchmark — 2x smaller, 2x faster write. float32 optimization. snappy compression. UTC timestamps. Exception handling. Verify round-trip confirmed 100k rows clean.
 - D17 (Apr 24): Pipeline test. Full end-to-end synthetic pipeline.  6 unit tests PASS. IC analysis 16 features. Ridge baseline OOS IC=0.016. Parquet 0.2MB, 1000 rows, 25 columns. Pipeline runs in 22 seconds.Full OFI formula with price change and queue depletion handling.
+
+- ### Phase 4 — HMM Regime Detection
+- D1 (May 4): 2-state GaussianHMM on SPY realized volatility. State 0=Low Vol mean=0.0718, State 1=High Vol mean=0.1998. Transition matrix shows 99.72% regime persistence. Regimes visually match volatile periods. Plot saved to reports/hmm_2state_regimes.png
+- D2 (May 5): 3-state GaussianHMM on SPY realized volatility. Low Vol mean=0.0718 (34.9%), Medium Vol mean=0.0719 (34.9%), High Vol mean=0.1998 (30.2%). Key finding: Low and Medium Vol nearly identical — 3 states not justified on single feature alone. BIC/AIC model selection required May 8.
+
+
 ## Files
 
 ### phase0_foundations/
@@ -62,6 +68,10 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - audit_pipeline.py
 - save_to_parquet.py
 - pipline_test.py
+
+- ### hmm_regime_detection/
+- hmm_2state.py
+- hmm_3state.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -115,5 +125,10 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - Ridge combines all 16 features with optimal weights. IC just ranks them individually
 - Scaler fit on train only — fit on test = future leakage
 - shift(1) features = past data only. shift(-n) target = future return
+- - HMM: Hidden Markov Model. Finds hidden regimes from observable data. Baum-Welch learns parameters. Viterbi labels each time point
+- Regime persistence: once market enters stressed state it stays stressed. Transition matrix shows 99.72% stay probability
+- Emission: what each hidden state looks like in observable data. Low vol state emits small volatility values
+- State count selection: never pick number of states arbitrarily. Use BIC/AIC to justify. 3 states failed on realized vol alone
+- Volatility clustering: high vol days cluster together. Low vol days cluster together. HMM captures this naturally
   
 - 
