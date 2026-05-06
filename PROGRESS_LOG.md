@@ -192,3 +192,10 @@ Parquet save and reload verified. Pipeline completes in 22 seconds.
 **Confused:** Nothing major
 **Key Finding:** 2-state HMM better than 3-state when using realized volatility as single feature. Multi-feature HMM needed for meaningful 3-state separation.
 
+### D3 (May 6) — HMM Normality Test
+**Learned:** GaussianHMM assumes normal distribution for each state emission. Financial data almost never satisfies this. D'Agostino-Pearson test checks both skewness and kurtosis together in one test. P-value < 0.05 means reject normality. Rank transform converts values to percentile ranks 0-1 — removes distributional shape entirely. Skewness drops to zero after rank transform but distribution becomes uniform not normal — still fails normaltest but shape is now symmetric and bounded which is what HMM needs.
+**Built:** hmm_normality_test.py — normaltest on 9 features before and after rank transform. Before/after histogram plots saved to reports/hmm_normality_test.png
+**Results:** All 9 features FAIL normality. realized_vol skewness=5.96 kurtosis=65.6. amihud skewness=70.5 kurtosis=4972. After rank transform skewness≈0 for all features. Rank transform confirmed as correct preprocessing before HMM fitting.
+**Confused:** Nothing major
+**Key Finding:** Never assume normality in financial data. Always test and document.
+
