@@ -39,6 +39,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D1 (May 4): 2-state GaussianHMM on SPY realized volatility. State 0=Low Vol mean=0.0718, State 1=High Vol mean=0.1998. Transition matrix shows 99.72% regime persistence. Regimes visually match volatile periods. Plot saved to reports/hmm_2state_regimes.png
 - D2 (May 5): 3-state GaussianHMM on SPY realized volatility. Low Vol mean=0.0718 (34.9%), Medium Vol mean=0.0719 (34.9%), High Vol mean=0.1998 (30.2%). Key finding: Low and Medium Vol nearly identical — 3 states not justified on single feature alone. BIC/AIC model selection required May 8.
 - D3 (May 6): Normality test on 9 HMM input features. All 9 FAIL — realized_vol skewness=5.96 kurtosis=65.6, amihud skewness=70.5 kurtosis=4972. Rank transform applied — skewness drops to zero across all features. Confirmed rank transform as correct preprocessing before GaussianHMM fitting.
+- D4 (May 7): BIC/AIC model selection for HMM state count. Tested 2-7 states with 10 random seeds each. BIC decreasing through 7 states — largest marginal improvement at 2→3 transition. Chose 3 states for economic interpretability (calm/normal/stressed) and rolling HMM stability. Multi-seed approach confirmed curve stability.
 
 
 ## Files
@@ -74,6 +75,7 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - hmm_2state.py
 - hmm_3state.py
 - hmm_normality_test.py
+- hmm_model_selection.py
 
 ## Key Concepts
 - OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
@@ -135,5 +137,9 @@ Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime d
 - D'Agostino-Pearson test: tests normality by combining skewness and kurtosis into one p-value. P < 0.05 = reject normality
 - Normality assumption: GaussianHMM assumes normal emissions. Financial data always fails — must apply rank transform first
 - Rank transform result: converts to uniform distribution not normal. Skewness→0 but kurtosis→-1.2. Still fails normaltest but distributional shape removed
+- BIC: Bayesian Information Criterion. Penalizes complexity with log(n) x parameters. Lower = better. Used for HMM state count selection.
+- AIC: Akaike Information Criterion. Lighter penalty than BIC — 2 x parameters. Tends to pick more states.
+- Model selection vs validation: BIC selects model on full data — standard practice. Out-of-sample validation via rolling HMM separately.
+- Multi-seed HMM: run 10 random seeds per state count, keep best. Prevents local minima convergence.
   
 - 
