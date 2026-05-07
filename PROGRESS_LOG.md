@@ -199,3 +199,10 @@ Parquet save and reload verified. Pipeline completes in 22 seconds.
 **Confused:** Nothing major
 **Key Finding:** Never assume normality in financial data. Always test and document.
 
+### D4 (May 7) — HMM Model Selection
+**Learned:** BIC and AIC penalize model complexity to prevent overfitting. BIC has heavier penalty than AIC — log(n) vs 2 per parameter. Lower BIC/AIC = better model. Running multiple random seeds per state count prevents convergence to local minima. BIC on full data is standard practice — not lookahead bias. Out-of-sample validation happens via rolling HMM not BIC.
+**Built:** hmm_model_selection.py — BIC/AIC for 2-7 states with 10 seeds each. Rank transform applied before fitting. Smooth monotonically decreasing curve confirmed with multi-seed approach.
+**Results:** BIC decreasing through 7 states. Largest marginal improvement at 2→3 transition. Chose 3 states for economic interpretability and rolling HMM stability.
+**Confused:** Nothing major
+**Key Finding:** Mathematical optimum (BIC=7) vs research choice (3 states) is a deliberate tradeoff. Interpretability and computational stability justify choosing 3 over 7. BIC still validates the choice — 3 states shows clear improvement over 2.
+
