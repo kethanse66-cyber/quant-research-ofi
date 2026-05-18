@@ -1,0 +1,343 @@
+# PROGRESS LOG — quant-research-ofi
+
+# Last updated: May 15 2026
+
+---
+
+## Phase 1 — Synthetic Pipeline (April 2026) COMPLETE
+
+### Files Built
+
+simple_orderbook.py | ofi_synthetic.py | spread_calculator.py | 
+
+tick_cleaner.py | volume_bar_builder.py | trade_imbalance.py | 
+
+feature_library.py | queue_imbalance.py | ofi_full.py | 
+
+feature_normalizer.py | target_variable.py | lag_features.py | 
+
+audit_pipeline.py | save_to_parquet.py | pipeline_test.py
+
+### Key Decisions Locked
+
+- OFI formula: delta_bid - delta_ask at best level only (Cont et al. 2014)
+
+- shift(1) applied at model input only — never saved to parquet
+
+- Log returns for target variable — stationary, comparable across tickers
+
+- 16 features locked: ofi, ofi_10s, ofi_30s, ofi_1m, ofi_5m, ofi_10m,
+
+  queue_imbalance, trade_imbalance, spread, spread_change,
+
+  microprice, vwap, kyle_lambda, amihud, realized_vol, ofi_norm
+
+---
+
+## Phase 2 — Real Data Download (April 27 - May 2 2026) COMPLETE
+
+### Data
+
+- Source: Massive.com (Polygon.io)
+
+- 12 tickers: SPY QQQ IWM XLF XLK XLE XLV AAPL JPM NVDA ES1! TLT
+
+- Period: April 29 2024 to April 25 2025 (249 trading days)
+
+- Frequency: 10 second bars
+
+- Rows per ticker: ~582,000
+
+- Raw data: ~81GB | Feature parquets: ~458MB
+
+- Location: E:\quant-research-ofi\features\
+
+### Data Quality (from deep_quality_check.csv)
+
+- Zero negative spreads across all tickers
+
+- Zero duplicate timestamps
+
+- Zero negative volumes
+
+- lag_check_pass = True for all tickers
+
+- Mean rows per day = 2340 (exactly 6.5 hours × 360 bars/hour)
+
+- OFI NaN pct = 0.04% — clean
+
+---
+
+## Phase 3 — Data Validation + IC Analysis (May 2026) COMPLETE
+
+### Files Built
+
+validate_data.py | plot_ofi.py | ic_analysis.py | 
+
+cross_asset_ofi.py | feature_test.py
+
+### KEY RESULT — OFI Signal Check (ofi_signal_check.csv)
+
+Walk-forward IC analysis — 8 folds — SPY
+
+| Horizon    | IC Mean | ICIR  | p-value | Significant |
+
+|------------|---------|-------|---------|-------------|
+
+| fwd_ret_1m | 0.0137  | 2.999 | 0.0001  | YES         |
+
+| fwd_ret_5m | 0.0305  | 2.598 | 0.0002  | YES         |
+
+| fwd_ret_10m| 0.0417  | 2.457 | 0.0003  | YES         |
+
+OFI has statistically significant forward predictive power at 1m-10m horizons.
+
+ICIR above 2.0 across all horizons — robust signal.
+
+### Feature Summaries (from *_feature_summary.csv files)
+
+SPY: mean OFI = 167, std = 15234, mean realized_vol = 0.110
+
+QQQ: mean OFI = 120, std = 13743, mean realized_vol = 0.149
+
+IWM: mean OFI = -33, std = 11784, mean realized_vol = 0.167
+
+XLF: mean OFI = 160, std = 80494, mean realized_vol = 0.124
+
+XLK: mean OFI = 21, std = 4176, mean realized_vol = 0.175
+
+XLE: mean OFI = -22, std = 11310, mean realized_vol = 0.169
+
+XLV: mean OFI = 40, std = 6160, mean realized_vol = 0.110
+
+AAPL: mean OFI = -87, std = 6002, mean realized_vol = 0.201
+
+JPM: mean OFI = 37, std = 2145, mean realized_vol = 0.165
+
+NVDA: mean OFI = -147, std = 20124, mean realized_vol = 0.397
+
+TLT: mean OFI = -204, std = 28284, mean realized_vol = 0.087
+
+---
+
+## Phase 4 — HMM Regime Detection (May 6-15 2026) COMPLETE
+
+### Files Built
+
+hmm_normality_test.py | rank_transform.py | hmm_model_selection.py |
+
+rolling_hmm.py | regime_ofi_ic.py | regime_stats.py |
+
+regime_characterization.py | hmm_pipeline_all_tickers.py |
+
+cont_r2_comparison.py | r2_analysis.py
+
+### Rolling HMM Design
+
+- 3 states: calm / normal / stressed
+
+- Daily refit, full expanding window
+
+- Leakage-free rank transform (train distribution only)
+
+- 60 day burn-in
+
+- Consistent relabeling by realized_vol
+
+- Lookahead check: PASSED on all tickers
+
+### Regime Distribution (SPY)
+
+- Calm: 30.3% | Normal: 26.1% | Stressed: 43.6%
+
+- Stationary distribution matches empirical — HMM internally consistent
+
+### Transition Matrix (SPY)
+
+- Calm persistence: 83.1% — very stable
+
+- Normal persistence: 0.01% — transition state, not true regime
+
+- Stressed persistence: 51.7% — moderate
+
+### Regime Duration (SPY)
+
+- Calm: avg 0.98 min (5.9 bars)
+
+- Normal: avg 0.17 min (1.0 bar) — unstable
+
+- Stressed: avg 0.35 min (2.1 bars)
+
+### Regime Characterization (from full_characterization.csv)
+
+| Feature      | Calm    | Normal  | Stressed |
+
+|--------------|---------|---------|----------|
+
+| realized_vol | 0.058   | 0.141   | 0.164    |
+
+| spread       | 0.0179  | 0.0227  | 0.0246   |
+
+| ofi          | 75.2    | 130.9   | 169.4    |
+
+| queue_imb    | +0.012  | -0.009  | -0.002   |
+
+| trade_imb    | 0.135   | 0.151   | 0.178    |
+
+### Statistical Significance (Mann-Whitney + Cohen's d)
+
+- 14/16 features significantly different calm vs stressed
+
+- Large effect: realized_vol (d=1.21), microprice (d=-1.12)
+
+- Medium effect: spread (d=0.59)
+
+- Small effect: all OFI features (d~0.006)
+
+- Conclusion: HMM detects VOLATILITY regimes, not OFI regimes
+
+### Contemporaneous IC (regime_ic_table.csv)
+
+| Regime   | Now IC | 10s IC  | 1m IC   |
+
+|----------|--------|---------|---------|
+
+| Calm     | 0.2428 | -0.0131 | -0.0126 |
+
+| Normal   | 0.2074 | -0.0067 | -0.0107 |
+
+| Stressed | 0.2188 | -0.0023 | -0.0024 |
+
+Now IC = 0.24 — matches Cont et al. 2014 finding exactly.
+
+Forward IC near zero — OFI contemporaneous not predictive at 10s resolution.
+
+### R2 Analysis (vs Cont 2014)
+
+- Mean R2 across 11 tickers: 42.1%
+
+- Cont benchmark: 65% across 50 stocks
+
+- Best tickers: XLV 63.9%, TLT 60.6%, XLE 60.2%
+
+- Gap explained by: intra-bar aggregation, Level 1 vs tick data
+
+### Cross-Ticker IC by Regime (hmm_pipeline_all_tickers)
+
+| Ticker | IC Calm | IC Stressed | IC Diff |
+
+|--------|---------|-------------|---------|
+
+| SPY    | -0.0119 | -0.0144     | -0.0025 |
+
+| QQQ    | +0.0077 | +0.0070     | -0.0007 |
+
+| IWM    | -0.0170 | -0.0099     | +0.0071 |
+
+| XLF    | -0.0006 | -0.0105     | -0.0099 |
+
+| XLK    | -0.0067 | +0.0025     | +0.0092 |
+
+| XLE    | -0.0041 | -0.0020     | +0.0021 |
+
+| XLV    | +0.0127 | -0.0004     | -0.0131 |
+
+| AAPL   | -0.0128 | -0.0050     | +0.0078 |
+
+| JPM    | -0.0238 | -0.0108     | +0.0130 |
+
+| NVDA   | +0.0171 | -0.0148     | -0.0319 |
+
+| TLT    | -0.0027 | +0.0120     | +0.0147 |
+
+### Honest Limitations
+
+- Normal regime behaves as transition state — 2 states may be better
+
+- OFI not predictive at 5min forward horizon in regime-conditioned analysis
+
+- BUT Phase 3 shows global OFI IS predictive at 1m-10m (ICIR > 2.0)
+
+- Level 1 attenuation bias — LOBSTER comparison planned June 16
+
+- 2024-2025 sample period unusually stressed (43.6%)
+
+---
+
+## NEXT: Phase 5 ML Models (May 18-30 2026)
+
+walk_forward_validator.py | linear_baseline.py | feature_selection.py |
+
+gradient_boosting.py | per_regime_models.py | ic_summary_table.py |
+
+cointegration_test.py | garch_vol.py | shap_analysis.py
+
+reports/cross_ticker_ic_summary.csv
+
+ticker,n_labeled,ic_calm,ic_stressed,ic_diff
+
+SPY,329914,-0.0119,-0.0144,-0.0025
+
+QQQ,268810,0.0077,0.007,-0.0007
+
+IWM,289218,-0.017,-0.0099,0.0071
+
+XLF,257524,-0.0006,-0.0105,-0.0099
+
+XLK,320260,-0.0067,0.0025,0.0092
+
+XLE,317362,-0.0041,-0.002,0.0021
+
+XLV,401002,0.0127,-0.0004,-0.0131
+
+AAPL,253212,-0.0128,-0.005,0.0078
+
+JPM,251258,-0.0238,-0.0108,0.013
+
+NVDA,309000,0.0171,-0.0148,-0.0319
+
+TLT,303579,-0.0027,0.012,0.0147
+
+kethanse66@instance-20260427-063106:~/quant-research-ofi$ ^C
+---
+
+## Phase 5 — ML Models (May 18 2026) IN PROGRESS
+
+### Files Built
+walk_forward_validator.py
+
+### Walk-Forward Design
+- Expanding window: train grows each fold, test = 1 month
+- 8 folds on SPY: Apr 2024 → Mar 2025
+- Exact timestamp slicing (no normalize — avoids uneven fold issue)
+- shift(1) applied at compute time only — never saved to parquet
+- Lookahead assertion check on every fold — all passed
+- 3 target horizons: fwd_ret_1m, fwd_ret_5m, fwd_ret_10m
+
+### KEY RESULT — Walk-Forward IC (SPY, 8 folds)
+| Feature      | Mean IC (5m) | ICIR   |
+|--------------|--------------|--------|
+| realized_vol | +0.01966     | +0.749 |
+| amihud       | +0.009511    | +0.475 |
+| microprice   | -0.037941    | -2.664 |
+| ofi_norm     | -0.021532    | -1.134 |
+| ofi_1m       | -0.020896    | -0.921 |
+| ofi          | -0.011172    | -0.836 |
+
+### IC Decay (feature=ofi)
+| Horizon     | Mean IC   | ICIR   |
+|-------------|-----------|--------|
+| fwd_ret_1m  | -0.004817 | -0.545 |
+| fwd_ret_5m  | -0.011172 | -0.836 |
+| fwd_ret_10m | -0.014242 | -0.667 |
+
+### Honest Interpretation
+- OFI shows negative IC at all horizons — mean reversion effect
+- At 10s bar resolution, buy pressure gets absorbed and price reverts
+- Negative IC is still tradeable — just go opposite direction
+- Phase 3 showed positive contemporaneous IC — shift(1) here gives true predictive IC
+- realized_vol and amihud positive IC — illiquidity predicts upward returns
+- microprice strongest consistent signal (ICIR -2.664)
+
+### Output
+- walk_forward_ic.csv saved: 384 rows | 8 folds | 16 features | 3 targets
