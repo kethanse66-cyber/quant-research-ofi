@@ -341,3 +341,26 @@ walk_forward_validator.py
 
 ### Output
 - walk_forward_ic.csv saved: 384 rows | 8 folds | 16 features | 3 targets
+
+Here are all findings from today for your paper:
+
+---
+
+**Finding 1 — Overlapping target bias (Section 3 / Data)**
+
+`fwd_ret_5m` computed on 10s bars has lag-1 autocorrelation of 0.967. Adjacent rows share 29 out of 30 bars of their 5-minute window. Naive persistence IC was 0.95 — not a real signal, pure overlap. Fix: evaluate IC only on every 30th row (non-overlapping windows). After fix, naive IC drops to near zero as expected for efficient markets.
+
+**Finding 2 — OFI multicollinearity (Section 4 / Features)**
+
+Condition numbers of Ridge feature matrix ranged from 10^13 to 10^15 across all 10 folds. Normal threshold is under 1000. Root cause: ofi, ofi_10s, ofi_30s, ofi_1m, ofi_5m, ofi_10m are nearly perfectly correlated at 10s bar frequency — longer horizon OFI is just a rolling sum of shorter horizon OFI. Ridge regularisation cannot fully compensate at this severity. Feature selection (VIF + correlation pruning) is required before any meaningful IC can be estimated.
+
+**Finding 3 — Ridge baseline IC (Section 6 / Alpha Signal)**
+
+After correcting for overlap, Ridge baseline shows mean IC = 0.0035, ICIR = 0.096, NW t-stat = 0.54. Not statistically significant. This is the pre-feature-selection benchmark. Expected to improve materially after removing collinear OFI horizons tomorrow.
+
+**Finding 4 — Newey-West correction matters (Section 6 / Alpha Signal)**
+
+Regular t-stat = 0.303. NW HAC t-stat = 0.543. Direction same, magnitude different. At 10s bar frequency with 5-minute overlapping targets, standard errors without HAC correction are unreliable. All significance claims in this paper use NW-corrected t-stats with maxlags=5.
+
+---
+
