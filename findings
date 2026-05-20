@@ -418,8 +418,29 @@ These three are the most informative individual features even though no single o
 "Lasso regression showed no significant IC at any horizon, suggesting the predictive signal is distributed across multiple microstructure features rather than concentrated in a subset — a setting where Ridge regularisation outperforms sparse feature selection."
 
 ---
+Clear result. Ridge wins convincingly.
 
-Push and go.
+**Model comparison summary:**
+
+| Horizon | Ridge NW-t | Lasso NW-t | LightGBM NW-t | Winner |
+|---------|-----------|-----------|--------------|--------|
+| 30s | **3.44** | -0.06 | -0.56 | Ridge |
+| 1m | **2.11** | 1.09 | 0.12 | Ridge |
+| Others | not sig | not sig | not sig | none |
+
+**What this tells you:**
+
+LightGBM completely failed. Near zero IC across all horizons. This is actually an important finding — it means the OFI signal is predominantly linear. The relationship between order flow and returns is captured by a simple weighted combination, not complex nonlinear interactions.
+
+This also confirms Ridge was not overfitting — if it was, LightGBM would have found something too.
+
+**Your paper conclusion from today:**
+
+"Among three models tested — Ridge, Lasso, and LightGBM — Ridge regression consistently outperformed at short horizons. LightGBM showed near-zero IC across all horizons, suggesting the predictive relationship between OFI features and returns is predominantly linear. This is consistent with the theoretical foundation of Cont et al. 2014 where OFI has a linear price impact relationship."
+
+---
+
+
 
 ---
 
