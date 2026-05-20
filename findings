@@ -386,7 +386,40 @@ Mean IC of 0.003 to 0.006 is on the lower end of microstructure literature. Expe
 
 **Finding 4 — Transaction costs will be significant at short horizons (Section 7)**
 
-30-second turnover strategy faces material bid-ask crossing costs. Gross Sharpe estimated 0.8 to 1.5 before costs. Net Sharpe to be quantified in Phase 6 backtest. Signal is primarily accessible to low-latency participants.
+30-second turnover strategy faces material bid-ask crossing costs. Gross Sharpe estimated 0.8 to 1.5 before costs. Net Sharpe to be quantified in Phase 6 backtest.Signal is primarily accessible to low-latency participants.
+
+Lasso findings for your paper:
+
+---
+
+**Lasso finding 1 — Not significant at any horizon**
+
+No horizon showed NW t-stat above 2.0. Lasso failed to find a significant signal across 10s, 30s, 1m, 5m, 10m.
+
+---
+
+**Lasso finding 2 — Signal is spread across features not concentrated**
+
+Lasso works by picking a few dominant features and zeroing the rest. It failed here because no single feature dominates strongly enough. The OFI signal requires multiple features working together. Ridge handles this better.
+
+---
+
+**Lasso finding 3 — Most selected features across horizons**
+
+ofi_10m — appeared in every horizon. Most consistent predictor.
+vwap_deviation — appeared in 4 out of 5 horizons.
+realized_vol — appeared in 4 out of 5 horizons.
+These three are the most informative individual features even though no single one is enough alone.
+
+---
+
+**One sentence for paper:**
+
+"Lasso regression showed no significant IC at any horizon, suggesting the predictive signal is distributed across multiple microstructure features rather than concentrated in a subset — a setting where Ridge regularisation outperforms sparse feature selection."
+
+---
+
+Push and go.
 
 ---
 
