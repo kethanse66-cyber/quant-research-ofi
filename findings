@@ -362,5 +362,34 @@ After correcting for overlap, Ridge baseline shows mean IC = 0.0035, ICIR = 0.09
 
 Regular t-stat = 0.303. NW HAC t-stat = 0.543. Direction same, magnitude different. At 10s bar frequency with 5-minute overlapping targets, standard errors withoutHAC correction are unreliable. All significance claims in this paper use NW-corrected t-stats with maxlags=5.
 Feature selection reduced the feature set from 16 to 13 by removing ofi, ofi_1m, and ofi_5m due to Spearman correlation above 0.8 with retained features. VIF scores for remaining features were all below 4, confirming multicollinearity was resolved. Condition number dropped from 10^13 to 4.67."
+Today's findings for your paper:
+
+---
+
+**Finding 1 — Feature selection fixed multicollinearity (Section 4)**
+
+Spearman correlation filter removed ofi, ofi_1m, ofi_5m — correlated above 0.8 with retained features. VIF filter removed nothing further — all 13 remaining features had VIF below 4. Condition number dropped from 10^13 to 4.67. Multicollinearity fully resolved.
+
+---
+
+**Finding 2 — Signal horizon confirmed at 30 seconds and 1 minute (Section 6)**
+
+Ridge regression on 13 selected features shows statistically significant IC at 30-second horizon (NW t-stat = 3.44) and 1-minute horizon (NW t-stat = 2.11). Signal decays beyond 5 minutes — not significant at 5-minute or 10-minute horizons. This confirms OFI is a short-horizon signal consistent with microstructure theory.
+
+---
+
+**Finding 3 — IC magnitude consistent with Level 1 research (Section 8)**
+
+Mean IC of 0.003 to 0.006 is on the lower end of microstructure literature. Expected given Level 1 data approximation. LOBSTER comparison in Phase 6 will quantify attenuation bias from using best bid/ask only versus full order book.
+
+---
+
+**Finding 4 — Transaction costs will be significant at short horizons (Section 7)**
+
+30-second turnover strategy faces material bid-ask crossing costs. Gross Sharpe estimated 0.8 to 1.5 before costs. Net Sharpe to be quantified in Phase 6 backtest. Signal is primarily accessible to low-latency participants.
+
+---
+
+
 ---
 
