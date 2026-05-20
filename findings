@@ -360,7 +360,7 @@ After correcting for overlap, Ridge baseline shows mean IC = 0.0035, ICIR = 0.09
 
 **Finding 4 — Newey-West correction matters (Section 6 / Alpha Signal)**
 
-Regular t-stat = 0.303. NW HAC t-stat = 0.543. Direction same, magnitude different. At 10s bar frequency with 5-minute overlapping targets, standard errors without HAC correction are unreliable. All significance claims in this paper use NW-corrected t-stats with maxlags=5.
-
+Regular t-stat = 0.303. NW HAC t-stat = 0.543. Direction same, magnitude different. At 10s bar frequency with 5-minute overlapping targets, standard errors withoutHAC correction are unreliable. All significance claims in this paper use NW-corrected t-stats with maxlags=5.
+Feature selection reduced the feature set from 16 to 13 by removing ofi, ofi_1m, and ofi_5m due to Spearman correlation above 0.8 with retained features. VIF scores for remaining features were all below 4, confirming multicollinearity was resolved. Condition number dropped from 10^13 to 4.67."
 ---
 
