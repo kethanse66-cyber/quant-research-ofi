@@ -482,6 +482,7 @@ Without regime conditioning, best global result was NW t-stat 3.44 at 30s. With 
 "Regime-conditioned Ridge models substantially outperform global models across all horizons. Training and testing within matched regimes reveals that OFI predictability is regime-specific — stressed markets show strongest signal at 30-second and 5-minute horizons (NW t-stat 3.48 and 7.85 respectively), while calm markets show signal concentrated at 10-second horizon (NW t-stat 4.84). Cross-regime evaluation systematically underestimates regime-specific IC, confirming that HMM regime labels capture economically distinct market states."
 
 ---
+Fold 1 had zero stressed training rows — first 3 months of data had no stressed regime detected. This means the result is based on 9 folds not 10. Small test sample sizes per fold (median ~400 rows after skip) mean individual fold IC is noisy — the NW t-stat aggregates across folds and the permutation confirms it is real.
 
 
 
