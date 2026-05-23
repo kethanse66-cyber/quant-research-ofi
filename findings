@@ -525,7 +525,16 @@ Ridge-Global 1m NW t-stat 2.11 — secondary result.
 Phase 3 bar-level ICIR 2.99 at 1m — confirmatory result.
 
 These three together form the core signal research finding of the paper.
+Compare to calm-matched 10s:
+Calm-matched: fold 9 IC = 0.0746 on 1893 rows. One fold dominated.
+Ridge-Global 30s: max IC = 0.0222 on 12,144 rows. Balanced across folds.
+Ridge-Global 30s is clearly more trustworthy.
 
+Final confirmed picture for your paper:
+Primary result: Ridge-Global 30s NW t-stat 3.44. Robust. 7/10 folds positive. Large consistent test sets.
+Secondary result: Ridge-Global 1m NW t-stat 2.11.
+Supporting: Phase 3 bar-level ICIR 2.99.
+Everything else is exploratory.
 ---
 
 
