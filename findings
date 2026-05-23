@@ -485,6 +485,51 @@ Without regime conditioning, best global result was NW t-stat 3.44 at 30s. With 
 Fold 1 had zero stressed training rows — first 3 months of data had no stressed regime detected. This means the result is based on 9 folds not 10. Small test sample sizes per fold (median ~400 rows after skip) mean individual fold IC is noisy — the NW t-stat aggregates across folds and the permutation confirms it is real.
 
 
+Today's complete findings for your paper:
+
+---
+
+**Finding 1 — IC Summary Table complete (Section 6)**
+
+Built final IC summary table with two evaluation methodologies — mixed and matched. Five models tested across five horizons. Ridge dominates. Lasso and LightGBM not significant anywhere confirming signal is linear.
+
+---
+
+**Finding 2 — Three robust significant results (Section 6)**
+
+Ridge-Global at 30s: NW t-stat 3.440. Significant. Most robust result — 10 clean folds, overlap corrected, no regime conditioning required.
+
+Ridge-Global at 1m: NW t-stat 2.110. Significant. Second most robust.
+
+Ridge-Calm-Matched at 10s: NW t-stat 4.844. Significant but fragile — driven partly by fold 9 with small test set of 1893 observations. Report with caveat.
+
+---
+
+**Finding 3 — Calm-Matched 10s result is fragile (Section 8)**
+
+Fold-by-fold analysis revealed fold 9 IC = 0.0746 on only 1893 calm test rows — disproportionate contribution to mean IC of 0.0227. High std IC of 0.0238 relative to mean confirms instability. Result passed permutation test but should be interpreted cautiously. Additional data would resolve this.
+
+---
+
+**Finding 4 — Mixed vs matched evaluation tension (Section 8)**
+
+Overlap correction reduces matched regime test samples to too few observations for reliable IC estimation. Stressed 5m result of NW t-stat 7.85 from per_regime_models.py used all matched rows without overlap correction — supported by permutation test but not overlap-corrected. Reported as secondary finding with explicit caveat.
+
+---
+
+**Finding 5 — Primary headline results confirmed (Section 6)**
+
+Most robust findings across entire ML phase:
+Ridge-Global 30s NW t-stat 3.44 — primary result.
+Ridge-Global 1m NW t-stat 2.11 — secondary result.
+Phase 3 bar-level ICIR 2.99 at 1m — confirmatory result.
+
+These three together form the core signal research finding of the paper.
+
+---
+
+
+
 
 
 ---
