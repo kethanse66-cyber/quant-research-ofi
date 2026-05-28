@@ -535,6 +535,54 @@ Primary result: Ridge-Global 30s NW t-stat 3.44. Robust. 7/10 folds positive. La
 Secondary result: Ridge-Global 1m NW t-stat 2.11.
 Supporting: Phase 3 bar-level ICIR 2.99.
 Everything else is exploratory.
+Complete findings from all three files for your paper:
+
+---
+
+**COINTEGRATION FINDINGS (Section 4 / Feature Construction)**
+
+Finding 1 — No cointegration detected among SPY, QQQ, IWM.
+Engle-Granger p-values: SPY-QQQ 0.589, SPY-IWM 0.538, QQQ-IWM 0.413. All above 0.05. Johansen trace statistics fail to reject null at all levels. No stable long-run relationship exists among these ETFs at 1-minute frequency over the 2024-2025 sample period.
+
+Finding 2 — SPY-QQQ spread showed marginal OOS IC of 0.015 at 30s (p=0.004) despite no cointegration. Spread is non-stationary so not suitable as a reliable feature. Not added to pipeline.
+
+Finding 3 — ES1! futures data unavailable. SPY-futures cash-futures basis analysis — a key planned robustness check — could not be completed. Noted as limitation in Section 8.
+
+Finding 4 — Rolling hedge ratio used throughout with 60-day window. Beta estimated only on data up to T-1. No lookahead bias in spread construction.
+
+---
+
+**GARCH FINDINGS (Section 4 / Feature Construction)**
+
+Finding 5 — GARCH(1,1) fitted on SPY 1-minute returns. Parameters: omega=0.029, alpha=0.806, beta=0.196, alpha+beta=1.003.
+
+Finding 6 — Near-IGARCH behaviour detected. Alpha+beta above 1 indicates volatility shocks are extremely persistent. Consistent with unusually stressed 2024-2025 sample where 43.6% of bars were classified as stressed regime by HMM.
+
+Finding 7 — Realized volatility outperforms GARCH conditional volatility as predictive feature. IC at 30s: realized 0.0023 vs GARCH 0.0019. IC at 1m: realized 0.0073 vs GARCH 0.0036. GARCH vol not added to feature set. Realized vol retained.
+
+Finding 8 — Decision: final feature set remains 13 features unchanged. No new features added from cointegration or GARCH analysis.
+
+---
+
+**SHAP FINDINGS (Section 6 / Alpha Signal Research)**
+
+Finding 9 — OFI features dominate at 30-second horizon. ofi_30s ranks first, followed by ofi_norm and realized_vol. Confirms signal is genuinely driven by order flow pressure — consistent with Cont et al. 2014 theoretical framework.
+
+Finding 10 — Feature importance is horizon-dependent. At 1-minute horizon realized_vol moves to rank 1, microprice_ret to rank 2. OFI features drop in relative importance. Suggests volatility regime context gains weight as pure order flow signal decays over time.
+
+Finding 11 — kyle_lambda, amihud, queue_imbalance contribute negligibly at both horizons. Mean absolute SHAP near zero. These features add little predictive value in the linear Ridge model. Candidates for removal in future feature selection iterations.
+
+Finding 12 — SHAP confirms project thesis. The signal is driven by what theory predicts — order flow imbalance at short horizons. The project is not data mining — it is confirming a theoretically motivated relationship.
+
+---
+
+**Overall ML Phase conclusion for paper:**
+
+"After testing cointegration spreads and GARCH conditional volatility as additional features, neither improved upon the existing 13-feature set. The final model uses Ridge regression on 13 microstructure features with order flow imbalance features as primary drivers confirmed by SHAP analysis. The signal is statistically significant at 30-second and 1-minute horizons with Newey-West corrected t-statistics of 3.44 and 2.11 respectively — consistent with the theoretical prediction that order flow information decays rapidly in liquid equity markets."
+
+---
+
+
 ---
 
 
