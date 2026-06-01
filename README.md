@@ -1,145 +1,308 @@
 # quant-research-ofi
-Cross-Asset Microstructure Alpha Signal | Intraday Liquidity Regimes & Order Flow Imbalance
+
+## Cross-Asset Microstructure Alpha Signal | Intraday Liquidity Regimes & Order Flow Imbalance
+
+**Author:** Kethan (kethanse66
+**Status:** Phase 6 Backtesting — IN PROGRESS
+
+---
 
 ## What This Project Is
-An institutional-grade quant research project targeting Jane Street, Citadel, and Two Sigma.
-Building a Cross-Asset OFI Alpha Signal from scratch — data pipeline, regime detection, predictive model, backtesting engine.
 
-## Current Progress
+An institutional-grade quantitative research project building a Cross-Asset Order Flow Imbalance (OFI) Alpha Signal from scratch. The project implements the Cont, Kukanov & Stoikov (2014) framework across 11 equity and ETF tickers at tick resolution, with HMM-based regime detection, walk-forward validated predictive models, and a full backtesting engine with realistic transaction costs.
 
-### Phase 0 — Foundations
+This is not a toy project. Every methodological choice — rolling HMM re-estimation, rank transform before HMM fitting, Newey-West corrected t-statistics, overlap-corrected IC evaluation, position clipping — is explicitly justified and documented.
+
+---
+
+## Key Results
+
+| Metric | Value |
+|--------|-------|
+| **Primary signal horizon** | 30 seconds |
+| **Ridge-Global 30s NW t-stat** | 3.44 (significant) |
+| **Ridge-Global 1m NW t-stat** | 2.11 (significant) |
+| **Phase 3 bar-level ICIR (1m)** | 2.999 |
+| **Stressed regime 5m NW t-stat** | 7.85 |
+| **Calm regime 10s NW t-stat** | 4.84 |
+| **OFI R2 vs Cont 2014 benchmark** | 42.1% vs 65% (Level 1 attenuation explained) |
+| **HMM states chosen** | 3 (calm / normal / stressed) |
+| **Regime IC doubles in stressed vs calm** | Confirmed |
+| **LightGBM vs Ridge** | Ridge wins — signal is linear |
+| **Tickers** | SPY QQQ IWM XLF XLK XLE XLV AAPL JPM NVDA TLT |
+| **Data period** | April 2024 — April 2025 (249 trading days) |
+| **Bar frequency** | 10 seconds |
+| **Rows per ticker** | ~582,000 |
+| **Total raw data** | ~81 GB |
+
+---
+
+## Methodology Summary
+
+### Signal Construction
+Order Flow Imbalance computed per Cont et al. (2014):
+
+```
+OFI_t = delta_BidSize_t - delta_AskSize_t
+```
+
+Computed at best level only (Level 1 Polygon data). OFI normalized using rolling standard deviation. 16 features total: 7 OFI horizons, spread, queue imbalance, trade imbalance, microprice, VWAP deviation, Kyle lambda, Amihud illiquidity, realized volatility.
+
+### Regime Detection
+GaussianHMM with 3 states (calm / normal / stressed) on rank-transformed features. Rolling re-estimation: at each prediction point T, HMM fitted only on data up to T-1. Prevents lookahead bias in regime labels. 60-day burn-in. BIC tested 2-7 states — 3 states chosen for economic interpretability.
+
+### Predictive Model
+Ridge regression on 13 selected features (after Spearman + VIF multicollinearity removal). Walk-forward cross-validation: 3-month expanding train, 1-month test, 8 folds. Overlap-corrected IC evaluation (non-overlapping windows for multi-bar targets). Newey-West HAC t-statistics throughout.
+
+### Key Finding: Regime Conditioning
+Training and testing within matched regimes reveals signal that global models miss. Stressed-matched model at 5-minute horizon achieves NW t-stat = 7.85 vs global model which is not significant at that horizon.
+
+---
+
+## Why This Is Not Overfitting
+
+1. **Walk-forward validation** — no data from test period used in training at any fold
+2. **Lookahead check PASSED** on every fold — shift(1) verified at compute time
+3. **Overlap correction** — overlapping 5-minute targets on 10-second bars create autocorrelation of 0.967; corrected by evaluating every 30th row only
+4. **Newey-West t-statistics** — corrects for residual autocorrelation at high frequency
+5. **LightGBM failed** — if Ridge was overfitting, LightGBM would have found something too
+6. **Rolling HMM** — regime labels generated out-of-sample at every prediction point
+7. **Feature selection before IC** — multicollinearity resolved before any significance claims
+
+---
+
+## Repository Structure
+
+```
+quant-research-ofi/
+├── phase1_foundations/          # Phase 0 — Python and statistics foundations
+├── phase1_synthetic_pipeline/   # Phase 1 — Full synthetic OFI pipeline
+├── hmm_regime_detection/        # Phase 4 — HMM regime detection
+├── ML models/                   # Phase 5 — ML models and IC analysis
+├── Backtesting/                 # Phase 6 — Backtesting engine (IN PROGRESS)
+├── README.md
+└── PROGRESS_LOG.md
+```
+
+---
+
+## Phase 0 — Foundations (April 2026) COMPLETE
+
 - D1: Return calculator using Python for loops
-- D2: Rebuilt using NumPy. Log returns, win rate, vectorised operations
-- D3: Real SPY data. 8 DataFrame operations. 3 charts
-- D4: Proved SPY returns not normal. Skewness=-0.54, Kurtosis=11.44, P-value=0.0
+- D2: NumPy vectorized returns. Log returns, win rate
+- D3: Real SPY data. DataFrame operations. Charts
+- D4: SPY returns not normal — Skewness=-0.54, Kurtosis=11.44, P-value=0.0
 - D5: Hypothesis test on SPY mean return. t-stat=1.66, p-value=0.096
 - D6: SPY vs QQQ correlation=0.93. OLS beta=1.13, R-squared=0.87
 - D7: ADF test. SPY price not stationary p=0.948. Returns stationary p=0.0
 - D8: Multiple testing on 20 strategies. 1 fake signal before Bonferroni, 0 after
 
-### Phase 1 — Synthetic Pipeline
-- D1 (Apr 6): Simple order book. add_order, mid_price, calculate_ofi functions
-- D2 (Apr 7): Synthetic OFI pipeline. Bid/ask sizes, OFI, spread, rolling features
-- D3 (Apr 8): Spread calculator. Quoted spread, effective spread, Roll spread. Comparison chart
-- D4 (Apr 9): Tick cleaner. Drop duplicates, remove bad prices, drop zero volume, fill missing timestamps, UTC normalization
-- D5 (Apr 10): Volume bar builder. Volume bars vs time bars comparison.Time bar volume std=8446 vs mean=28951. Volume bars normalize activity per bar.Quote data      OFI input. Trade data = price and volume input.
-- D6 (Apr 11): Saturday review day. No new file. GitHub push and cleanup
-- D7 (Apr 13): Trade imbalance. Lee-Ready classification. Volume-weighted rolling imbalance. Range -1 to +1
-- D8 (Apr 14): Feature library. Microprice, spread change, normalized OFI. Weighted mid-price using queue sizes. OFI normalized using rolling std.
-- D9 (Apr 15): Queue imbalance. Best level formula. Edge case tests. Level 1 only for Polygon data.
-- D10 (Apr 16): Multi-horizon OFI (30s / 1min / 5min), ACF, ADF stationarity, Information Coefficient, visualization dashboard
-- D11 (Apr 17): Feature normalizer. Rank transform, z-score, min-max with rolling window support. Rank transform chosen for HMM — removes fat-tail shape. Audit function shows skew and kurtosis before vs after.
--  D13 (Apr 20): Target variable. Log returns at 10s, 1min, 5min horizons. Parameterized horizons dict. Index frequency validation. NaN count confirmed correct.
-- D14 (Apr 21): Lag features. shift(1,2,3) on all features. Rolling normalization with shift(1) to avoid look-ahead bias.
-- D15 (Apr 22): Audit pipeline. Look-ahead audit on all features. Lag validation confirmed — df_model.iloc[0] matches df_raw.iloc[0]. All features PASS. 2 rows dropped — first row NaN features, last row NaN target. First valid prediction row 09:31am.
-- D16 (Apr 23): Save to Parquet. CSV vs Parquet benchmark — 2x smaller, 2x faster write. float32 optimization. snappy compression. UTC timestamps. Exception handling. Verify round-trip confirmed 100k rows clean.
-- D17 (Apr 24): Pipeline test. Full end-to-end synthetic pipeline.  6 unit tests PASS. IC analysis 16 features. Ridge baseline OOS IC=0.016. Parquet 0.2MB, 1000 rows, 25 columns. Pipeline runs in 22 seconds.Full OFI formula with price change and queue depletion handling.
+---
 
-- ### Phase 4 — HMM Regime Detection
-- D1 (May 4): 2-state GaussianHMM on SPY realized volatility. State 0=Low Vol mean=0.0718, State 1=High Vol mean=0.1998. Transition matrix shows 99.72% regime persistence. Regimes visually match volatile periods. Plot saved to reports/hmm_2state_regimes.png
-- D2 (May 5): 3-state GaussianHMM on SPY realized volatility. Low Vol mean=0.0718 (34.9%), Medium Vol mean=0.0719 (34.9%), High Vol mean=0.1998 (30.2%). Key finding: Low and Medium Vol nearly identical — 3 states not justified on single feature alone. BIC/AIC model selection required May 8.
-- D3 (May 6): Normality test on 9 HMM input features. All 9 FAIL — realized_vol skewness=5.96 kurtosis=65.6, amihud skewness=70.5 kurtosis=4972. Rank transform applied — skewness drops to zero across all features. Confirmed rank transform as correct preprocessing before GaussianHMM fitting.
-- D4 (May 7): BIC/AIC model selection for HMM state count. Tested 2-7 states with 10 random seeds each. BIC decreasing through 7 states — largest marginal improvement at 2→3 transition. Chose 3 states for economic interpretability (calm/normal/stressed) and rolling HMM stability. Multi-seed approach confirmed curve stability.
+## Phase 1 — Synthetic Pipeline (April 2026) COMPLETE
 
+- D1 (Apr 6): simple_orderbook.py — add_order, mid_price, calculate_ofi
+- D2 (Apr 7): ofi_synthetic.py — synthetic bid/ask, OFI, rolling features
+- D3 (Apr 8): spread_calculator.py — quoted, effective, Roll spread
+- D4 (Apr 9): tick_cleaner.py — duplicates, bad prices, UTC normalization, parquet
+- D5 (Apr 10): volume_bar_builder.py — volume bars vs time bars comparison
+- D7 (Apr 13): trade_imbalance.py — Lee-Ready classification, rolling imbalance
+- D8 (Apr 14): feature_library.py — microprice, spread change, normalized OFI
+- D9 (Apr 15): queue_imbalance.py — best level formula, edge cases
+- D10 (Apr 16): ofi_full.py — multi-horizon OFI (30s/1m/5m), ACF, ADF, IC
+- D11 (Apr 17): feature_normalizer.py — rank transform chosen for HMM
+- D13 (Apr 20): target_variable.py — log returns 10s/1m/5m, shift(-n) validated
+- D14 (Apr 21): lag_features.py — shift(1,2,3) features, rolling normalization
+- D15 (Apr 22): audit_pipeline.py — lookahead audit PASSED all features
+- D16 (Apr 23): save_to_parquet.py — 2x smaller than CSV, float32, snappy
+- D17 (Apr 24): pipeline_test.py — 6 unit tests PASS, Ridge OOS IC=0.016
 
-## Files
+### Key Decisions Locked in Phase 1
+- OFI formula: delta_bid - delta_ask at best level (Cont et al. 2014)
+- shift(1) applied at model input only — never saved to parquet
+- Log returns for target — stationary, comparable across tickers
+- 16 features locked: ofi, ofi_10s, ofi_30s, ofi_1m, ofi_5m, ofi_10m, queue_imbalance, trade_imbalance, spread, spread_change, microprice, vwap, kyle_lambda, amihud, realized_vol, ofi_norm
 
-### phase0_foundations/
-- return_calculator.py
-- return_calculator_numpy.py
-- pandas_basics.py
-- stats_report.py
-- hypothesis_test.py
-- regression_analysis.py
-- stationarity_test.py
-- multiple_testing_demo.py
+---
 
-### phase1_synthetic_pipeline/
-- simple_orderbook.py
-- ofi_synthetic.py
-- spread_calculator.py
-- tick_cleaner.py
-- volume_bar_builder.py
-- trade_imbalance.py
-- feature_library.py
-- queue_imbalance.py
-- ofi_full.py
-- feature_normalizer.py
-- target_variable.py
-- lag_features.py
-- audit_pipeline.py
-- save_to_parquet.py
-- pipline_test.py
+## Phase 2 — Real Data Download (April-May 2026) COMPLETE
 
-- ### hmm_regime_detection/
-- hmm_2state.py
-- hmm_3state.py
-- hmm_normality_test.py
-- hmm_model_selection.py
+- Source: Polygon.io (Massive.com API)
+- 12 tickers: SPY QQQ IWM XLF XLK XLE XLV AAPL JPM NVDA ES1! TLT
+- Period: April 29 2024 to April 25 2025 (249 trading days)
+- Frequency: 10-second bars
+- Rows per ticker: ~582,000
+- Raw data: ~81 GB | Feature parquets: ~458 MB
 
-## Key Concepts
-- OFI: delta_bid - delta_ask. Positive = buy pressure. Negative = sell pressure
-- Quoted spread: ask - bid. Direct cost of trading
-- Effective spread: 2 * abs(trade_price - mid_price). Actual trade cost
-- Roll spread: estimated from price autocorrelation alone. No bid/ask needed
-- Stationarity: required before any regression. ADF test to verify
-- Multiple testing: always apply Bonferroni correction or results are meaningless
-- Beta: sensitivity of one asset to another. SPY vs QQQ beta = 1.13
-- Volume bars: one bar per X shares traded. Equal activity per bar.Better than time bars for microstructure research
-- Trade data: actual transactions. Price and volume per tick
-- Quote data: bid/ask offers. bid_size and ask_size changes → OFI input
-- OHLC: open high low close. Built from compressing ticks. Not used in OFI pipeline
--Trade imbalance: (buy_vol - sell_vol) / (buy_vol + sell_vol). Range -1 to +1. Measures directional volume pressure
-- Lee-Ready rule: trade above mid = buy (+1). Trade below mid = sell (-1). Trade at mid = neutral (0)
-- Microprice: weighted mid price using queue sizes. Closer to side with larger size
-- Spread change: change in ask-bid spread. Measures liquidity tightening/widening
-- Normalized OFI: OFI divided by rolling std. Measures imbalance strength relative to recent history
-- Queue imbalance: (bid_size - ask_size) / (bid_size + ask_size). Range -1 to +1. Measures directional pressure at best level
-- Multi-horizon OFI: OFI tested at 30s, 1min, 5min bars
-- ACF: checks if OFI continues or reverses over time
-- ADF test: checks if OFI is stationary
-- IC: correlation between OFI and future returns
-- Lagged OFI: previous OFI used to avoid look-ahead bias
-- - Target variable: log(price_t+n / price_t). What price actually did n seconds later. Model predicts this using OFI
-- Log returns: log(future/current). Stationary and comparable across tickers. Raw price difference is neither
-- shift(-n): looks n rows ahead. Rows not seconds. 1min = shift(-6) only if each row = 10 seconds
-- Index frequency check: confirms row spacing before trusting shift numbers. Critical for real Polygon data
-- NaN in targets: last N rows have no future data. Dropped before model training. Not an error
-- Rank transform: convert values to percentile ranks 0-1. Removes distributional shape. Preferred before HMM fitting
-- Z-score: (x - mean) / std. Mean=0, std=1 but unbounded. Outliers remain
-- Min-max: (x - min) / (max - min). Bounded [0,1] but sensitive to outliers
-- Rolling normalization: use only past window of data. Avoids look-ahead bias in live pipeline
-- - Lag features: shift(n) on features so model sees only past data. Captures OFI persistence
-- shift(1) on rolling: use only prior window for normalization. Avoids look-ahead bias
-- model_df: clean DataFrame after dropna. Both features and target valid. Ready for training
-- Queue imbalance vs trade imbalance: queue = sitting orders = intention. trade = executed orders = action
-- Signal decay: OFI predicts returns best at short horizons. Decays over time. ACF measures this
-- Liquidity sweep: institution sells to trigger retail stops, buys back cheaper. OFI spikes before price moves
-- - Look-ahead audit: check row 0 of every lagged feature is NaN before dropna. After dropna, verify df_model.iloc[0] equals df_raw.iloc[0]
-- dropna(): removes first row (NaN features from shift(1)) and last row (NaN target from shift(-1)). Applied after both feature lagging and target computation
-- First valid prediction row: first timestamp where both features and target are valid. Always one row after raw row 0
-- Lag validation: df_model.iloc[0][feature] must equal df_raw.iloc[0][feature]. Confirms shift worked correctly
-- Parquet: columnar storage. Reads one column without loading others. 
-  2x smaller than CSV. snappy compression. Standard for tick data.
-- float32: halves memory vs float64. Sufficient precision for OFI features.
-- perf_counter: most precise Python timer. Use for benchmarking over time.timev
-- - Full OFI formula: price changes + queue depletion + size changes. Not just size diff
-- Unit tests: assert catches silent bugs before they reach model
-- IC: rank correlation between feature and future returns. Higher = better predictor
-- Ridge combines all 16 features with optimal weights. IC just ranks them individually
-- Scaler fit on train only — fit on test = future leakage
-- shift(1) features = past data only. shift(-n) target = future return
-- - HMM: Hidden Markov Model. Finds hidden regimes from observable data. Baum-Welch learns parameters. Viterbi labels each time point
-- Regime persistence: once market enters stressed state it stays stressed. Transition matrix shows 99.72% stay probability
-- Emission: what each hidden state looks like in observable data. Low vol state emits small volatility values
-- State count selection: never pick number of states arbitrarily. Use BIC/AIC to justify. 3 states failed on realized vol alone
-- Volatility clustering: high vol days cluster together. Low vol days cluster together. HMM captures this naturally
-- D'Agostino-Pearson test: tests normality by combining skewness and kurtosis into one p-value. P < 0.05 = reject normality
-- Normality assumption: GaussianHMM assumes normal emissions. Financial data always fails — must apply rank transform first
-- Rank transform result: converts to uniform distribution not normal. Skewness→0 but kurtosis→-1.2. Still fails normaltest but distributional shape removed
-- BIC: Bayesian Information Criterion. Penalizes complexity with log(n) x parameters. Lower = better. Used for HMM state count selection.
-- AIC: Akaike Information Criterion. Lighter penalty than BIC — 2 x parameters. Tends to pick more states.
-- Model selection vs validation: BIC selects model on full data — standard practice. Out-of-sample validation via rolling HMM separately.
-- Multi-seed HMM: run 10 random seeds per state count, keep best. Prevents local minima convergence.
-  
-- 
+### Data Quality
+- Zero negative spreads across all tickers
+- Zero duplicate timestamps
+- Zero negative volumes
+- lag_check_pass = True for all tickers
+- Mean rows per day = 2340 (exactly 6.5 hours × 360 bars/hour)
+- OFI NaN pct = 0.04%
+
+---
+
+## Phase 3 — Data Validation + IC Analysis (May 2026) COMPLETE
+
+### KEY RESULT — OFI Signal (Walk-Forward, 8 Folds, SPY)
+
+| Horizon | IC Mean | ICIR | p-value | Significant |
+|---------|---------|------|---------|-------------|
+| fwd_ret_1m | 0.0137 | 2.999 | 0.0001 | YES |
+| fwd_ret_5m | 0.0305 | 2.598 | 0.0002 | YES |
+| fwd_ret_10m | 0.0417 | 2.457 | 0.0003 | YES |
+
+OFI has statistically significant forward predictive power. ICIR above 2.0 across all horizons.
+
+### R2 vs Cont 2014 Benchmark
+- Mean R2 across 11 tickers: 42.1%
+- Cont benchmark: 65%
+- Gap explained by Level 1 vs tick data attenuation bias
+- Best tickers: XLV 63.9%, TLT 60.6%, XLE 60.2%
+
+---
+
+## Phase 4 — HMM Regime Detection (May 2026) COMPLETE
+
+### Files
+- hmm_2state.py — 2-state GaussianHMM baseline
+- hmm_3state.py — 3-state attempt on single feature
+- hmm_normality_test.py — all 9 features FAIL normality, rank transform justified
+- hmm_model_selection.py — BIC/AIC 2-7 states, 10 seeds each
+- rolling_hmm.py — rolling re-estimation, lookahead-free regime labels
+- regime_stats.py — transition matrix, regime duration, characterization
+- regime_characterization.py — full 16-feature table per regime
+
+### Design Decisions
+- 3 states chosen: calm / normal / stressed
+- Daily refit, expanding window, 60-day burn-in
+- Rank transform applied on train distribution only — leakage-free
+- Consistent relabeling by realized_vol across all folds
+- Lookahead check: PASSED on all tickers
+
+### Regime Distribution (SPY)
+- Calm: 30.3% | Normal: 26.1% | Stressed: 43.6%
+
+### Transition Matrix (SPY)
+- Calm persistence: 83.1% | Normal: 0.01% (transition state) | Stressed: 51.7%
+
+### Regime Characterization
+
+| Feature | Calm | Normal | Stressed |
+|---------|------|--------|----------|
+| realized_vol | 0.058 | 0.141 | 0.164 |
+| spread | 0.0179 | 0.0227 | 0.0246 |
+| ofi | 75.2 | 130.9 | 169.4 |
+| queue_imbalance | +0.012 | -0.009 | -0.002 |
+
+### Honest Finding
+HMM detects volatility regimes, not OFI regimes. OFI effect sizes small (Cohen's d ~0.006). Normal regime behaves as transition state — 2 states may be statistically better but 3 chosen for economic interpretability.
+
+---
+
+## Phase 5 — ML Models (May 2026) COMPLETE
+
+### Files
+- walk_forward_validator.py — expanding window CV framework
+- linear_baseline.py — Ridge walk-forward with NW t-stats
+- feature_selection.py — Spearman + VIF multicollinearity removal
+- gradient_boosting.py — LightGBM vs Ridge comparison
+- lasso.py — Lasso baseline
+- per_regime_model.py — regime-matched training and evaluation
+- ic_summary_table.py — final IC table all models all horizons
+- cointegration_test.py — Engle-Granger + Johansen on 3 pairs
+- garch_volume.py — GARCH(1,1) vs realized vol comparison
+- shap_analysis.py — SHAP feature importance 30s and 1m horizons
+- ic_per_regime.py — IC breakdown by regime
+- audit_stressed_5m.py — permutation test on stressed 5m result
+
+### Final IC Summary Table
+
+| Model | Horizon | NW t-stat | Significant |
+|-------|---------|-----------|-------------|
+| Ridge-Global | 30s | 3.44 | YES — PRIMARY RESULT |
+| Ridge-Global | 1m | 2.11 | YES — SECONDARY RESULT |
+| Ridge-Calm-Matched | 10s | 4.84 | YES — FRAGILE (fold 9 dominated) |
+| Ridge-Stressed-Matched | 5m | 7.85 | YES — caveat: not overlap-corrected |
+| Lasso | all | <2.0 | NO |
+| LightGBM | all | ~0 | NO |
+
+### Key Findings
+1. Signal is linear — LightGBM failure confirms this
+2. Regime conditioning reveals signal global models miss
+3. Feature selection critical — condition number 10^13 → 4.67 after removing collinear OFI horizons
+4. SHAP confirms ofi_30s dominates at 30s, realized_vol dominates at 1m
+5. No cointegration among SPY/QQQ/IWM — no pairs trading signal
+6. GARCH not added — realized vol outperforms as predictive feature
+
+---
+
+## Phase 6 — Backtesting (June 2026) IN PROGRESS
+
+### Files
+- backtest_engine.py — BacktestEngine class, signal to PnL, bid-ask costs, drawdown
+
+### Smoke Test (random signal)
+- Sharpe: -21.85 (expected — random signal loses to costs)
+- Max Drawdown: -1.66%
+- Final Equity: 0.9899
+- Win Rate: 43.68%
+- Avg Turnover: 0.114
+
+**Upcoming:** transaction_costs.py (Jun 2) | position_sizer.py (Jun 3) | walk_forward_backtest.py (Jun 5) | audit_report.py (Jun 8) | pbo_calculator.py (Jun 10)
+
+---
+
+## Honest Limitations
+
+1. **Level 1 attenuation bias** — using best bid/ask only vs full order book. LOBSTER comparison planned June 16 to quantify IC loss.
+2. **Normal regime unstable** — 0.01% persistence suggests transition state not true regime. 2-state HMM may be better statistically.
+3. **Stressed sample period** — 43.6% stressed bars in 2024-2025 is unusually high. Results may not generalize to calmer market conditions.
+4. **ES1! futures unavailable** — cash-futures basis analysis not completed. Key robustness check missing.
+5. **Calm-matched 10s result fragile** — fold 9 dominated with small test set. Report with caveat.
+6. **Short OOS period** — 249 trading days. Bootstrap confidence intervals will be wide.
+
+---
+
+## How to Reproduce
+
+```bash
+# Clone repo
+git clone https://github.com/kethanse66-cyber/quant-research-ofi.git
+cd quant-research-ofi
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Data required: Polygon.io API key
+# Set environment variable: export POLYGON_API_KEY=your_key
+
+# Run feature pipeline on SPY
+python phase1_synthetic_pipeline/pipeline_test.py
+
+# Run HMM regime detection
+python hmm_regime_detection/rolling_hmm.py
+
+# Run ML models
+python ML\ models/linear_baseline.py
+python ML\ models/per_regime_model.py
+
+# Run backtest
+python Backtesting/backtest_engine.py
+```
+
+---
+
+## References
+
+- Cont, Kukanov & Stoikov (2014) — The Price Impact of Order Book Events
+- Kyle (1985) — Continuous Auctions and Insider Trading
+- Glosten & Milgrom (1985) — Bid, Ask and Transaction Prices
+- Bailey & Lopez de Prado (2014) — The Deflated Sharpe Ratio
+- Almgren & Chriss (2001) — Optimal Execution of Portfolio Transactions
+- Rabiner (1989) — A Tutorial on Hidden Markov Models
+
+---
+
