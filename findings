@@ -604,6 +604,102 @@ Honest limitations:
 4. 249 days is short track record — bootstrap CI would be wide
 
 ---
+Here are the complete findings for your paper. Copy these directly into Section 7.
+
+---
+
+**Section 3 — Data & Descriptive Statistics**
+
+```
+SPY microprice mean     : $565.02
+SPY bid-ask spread mean : $0.020  (0.35 bps)
+SPY bid-ask spread max  : 8.07 bps  (stress periods)
+Data period             : April 29 2024 → April 25 2025
+Bars                    : 582,659  (249 trading days, 10-second frequency)
+```
+
+---
+
+**Section 7 — Backtest Methodology & Results**
+
+**Transaction Cost Model:**
+
+```
+Spread cost    : real bid-ask spread from tick data (mean 0.35 bps)
+Market impact  : Almgren-Chriss sqrt model
+                 participation rate = trade_size / ADV
+                 SPY ADV = $45.2 billion/day
+                 avg trade size = $27,000
+                 participation = 0.00006%
+                 impact per trade = 0.06 bps
+Commission     : 0.10 bps per trade
+Total cost     : ~0.51 bps per trade
+```
+
+**Holding Period Sweep — full table:**
+
+| Holding Period | Sharpe (Gross) | Sharpe (Net) | Cost % of Gross | Max Drawdown | Survives |
+|---|---|---|---|---|---|
+| 10 seconds | 2.002 | -45.5 | 2400% | -44.6% | No |
+| 30 seconds | 1.100 | -22.8 | 2180% | -31.7% | No |
+| 1 minute | 0.677 | -17.2 | 2653% | -25.3% | No |
+| 5 minutes | 1.824 | -2.3 | 224% | -4.7% | No |
+| 10 minutes | 0.989 | -1.3 | 227% | -2.5% | No |
+| **30 minutes** | **0.878** | **+0.114** | **87%** | **-2.33%** | **Yes** |
+
+**Key cost analysis:**
+
+```
+Gross signal edge      : ~5 bps/day
+Spread cost at 10s     : 819 bps/day  (164x gross — signal destroyed)
+Spread cost at 30min   : 4.5 bps/day  (0.9x gross — signal survives)
+```
+
+**Final backtest result at 30-minute holding:**
+
+```
+Signal            : -ofi_norm (negatively correlated with fwd_ret_10m)
+Portfolio         : $1,000,000
+Period            : 249 trading days
+Gross Sharpe      : 0.878
+Net Sharpe        : 0.114
+Annualized return : 0.18%
+Max drawdown      : -2.33%
+Calmar ratio      : 0.078
+Win rate          : 46.70%
+Net PnL           : +$1,928
+Cost drag         : 87% of gross
+```
+
+---
+
+**Section 8 — Robustness & Limitations**
+
+**Honest limitations to state explicitly:**
+
+**Limitation 1 — Net Sharpe is modest:**
+Net Sharpe of 0.114 is insufficient for live deployment as-is. Regime conditioning — trading only in stressed regimes where IC doubles — is the primary identified improvement.
+
+**Limitation 2 — Single ticker:**
+Results shown for SPY only. Cross-asset extension across all 11 tickers is in progress. Signal correlation across assets is unknown.
+
+**Limitation 3 — Signal direction finding:**
+ofi_norm required sign flip to produce positive gross PnL against fwd_ret_10m. This warrants further investigation — possible explanation is that large OFI in one direction causes temporary price overshoot which then reverses at 10-minute horizon.
+
+**Limitation 4 — Short track record:**
+249 trading days is approximately one year. Bootstrap confidence intervals on net Sharpe 0.114 would be wide. Longer out-of-sample period needed to confirm.
+
+**Limitation 5 — Holding period mismatch:**
+OFI signal horizon is 1-5 minutes. Optimal holding period for cost survival is 30 minutes. Signal decays between 5 and 30 minutes — regime conditioning and larger portfolio size would allow shorter holding periods.
+
+---
+
+**One paragraph for Section 7 introduction — say this out loud in interviews:**
+
+"The OFI signal generates approximately 5 basis points of gross edge per day on SPY. At 10-second execution frequency, bid-ask spread crossing alone costs 819 basis points per day — 164 times the gross signal — completely destroying returns. Reducing execution frequency to 30-minute position updates reduces spread costs to 4.5 basis points per day, allowing the signal to survive net of transaction costs. This result highlights a fundamental tension in microstructure alpha research: signals generated from high-frequency order book data must be executed patiently to avoid self-destruction through transaction costs. The minimum viable holding period for this signal at $1 million portfolio size is 30 minutes, at which point net Sharpe reaches 0.114 with maximum drawdown of 2.33%."
+
+---
+
 
 
 
