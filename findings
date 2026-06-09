@@ -985,6 +985,13 @@ Net Sharpe NVDA      : +0.140 → target +0.5+
 
 This is Phase 6 Day 3 work — `per_regime_backtest.py`.
 
+Data quality confirmed by systematic audit:
+- Zero duplicate timestamps across all 582,659 bars
+- Zero leakage detected — all feature-return correlations below 0.05 threshold
+- First valid prediction timestamp: 2024-04-29 10:00:10 (181-bar burn-in)
+- trade_imbalance, vwap, amihud excluded from model — 20-25% NaN rate
+- 16/16 features present, 582,478 usable rows after burn-in
+
 ---
 
 
