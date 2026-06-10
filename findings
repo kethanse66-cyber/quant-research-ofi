@@ -1026,7 +1026,69 @@ Reason bar-level is rejected: kurtosis = 155 is not real fat tails — it is a s
 **N_TRIALS = 50** (conservative — accounts for all horizons, models, regime variants, position sizing variants tested across project)
 
 **SR benchmark = 2.28** — observed SR must exceed this to show genuine skill. Ours does not — honest result, expected given 7 folds.
+---    
+
+
+**PBO FINDINGS — FULL DETAILS**
+
 ---
+
+**Setup**
+- Method: PBO-style cross-sectional CSCV (Bailey & Lopez de Prado 2014 inspired)
+- Performance matrix: 7 folds × 12 tickers
+- Splits: C(7,3) = 35 train/test combinations
+- Train per split: 3 folds, Test per split: 4 folds
+- Performance metric: sharpe_gross per fold per ticker
+- Caveat: tickers treated as strategies — cross-sectional robustness test, not true PBO
+
+---
+
+**Core Result**
+- PBO score: **0.3143**
+- Overfit count: 11 out of 35 splits
+- Interpretation: Moderate overfitting — interpret with caution
+- Random baseline: 0.50 — we are meaningfully below it
+
+---
+
+**Logit Distribution**
+- Mean logit: **+0.41** — positive, good
+- Std logit: 1.23
+- Min: -2.48, Max: +2.48
+- Pct negative: 31.4% = PBO
+
+---
+
+**OOS Performance**
+- Mean OOS Sharpe selected ticker: **1.31**
+- Mean OOS Sharpe average ticker: **0.98**
+- Excess: **+0.33** — selection adds value OOS
+
+---
+
+**Ticker Selection Frequency**
+- TLT: 43% — dominates training selection
+- XLV: 26%
+- JPM: 23%
+- AAPL: 6%
+- XLK: 3%
+- ES1!, IWM, NVDA, QQQ, SPY, XLE, XLF: 0% — never selected as best in training
+
+---
+
+**What It Means**
+
+Good news: PBO = 0.31 is below random baseline of 0.50. Selection has genuine signal. Mean logit positive. Excess OOS positive. Best training ticker still outperforms average ticker out of sample.
+
+Bad news: Moderate overfitting exists. 31% of splits the best training ticker ranked below median in test. TLT dominates selection — bond ETF microstructure is different from equities, which skews results.
+
+Noisy estimate: T=7 folds is far below recommended minimum of 16+. Number could shift significantly with more data.
+
+---
+
+**Paper Section 8 sentence:**
+
+> PBO-style cross-sectional CSCV (35 splits, C(7,3)) yields robustness score 0.31, below the random baseline of 0.50. Mean logit +0.41 and OOS excess Sharpe +0.33 confirm selection retains positive out-of-sample value. Results are qualified by T=7 folds, substantially below the minimum recommended for reliable PBO estimation.
 
 
 
