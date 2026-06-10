@@ -992,6 +992,40 @@ Data quality confirmed by systematic audit:
 - trade_imbalance, vwap, amihud excluded from model — 20-25% NaN rate
 - 16/16 features present, 582,478 usable rows after burn-in
 
+
+Here are all DSR findings:
+
+---
+
+**DSR — Fold-level (primary paper number)**
+- Folds: 7 monthly
+- Sharpe annualized: 0.62
+- DSR: **0.10**
+- Skewness: +0.18 (positive — good)
+- Excess kurtosis: -1.64 (thin tails)
+- Sortino: 1.57 > Sharpe 0.62 → positive skew confirmed
+
+---
+
+**DSR — Bar-level (secondary, not for paper)**
+- Bars: 10,964
+- Sharpe annualized: 0.51
+- DSR: **0.03**
+- Skewness: +3.69
+- Excess kurtosis: 155 — artificially inflated by non-overlapping 30-bar sampling
+- Sortino: 0.66 > Sharpe 0.51 → positive skew confirmed
+
+---
+
+**Paper number: DSR = 0.10**
+
+Reason bar-level is rejected: kurtosis = 155 is not real fat tails — it is a sampling artifact from taking every 30th bar. DSR formula gets destroyed by this.
+
+---
+
+**N_TRIALS = 50** (conservative — accounts for all horizons, models, regime variants, position sizing variants tested across project)
+
+**SR benchmark = 2.28** — observed SR must exceed this to show genuine skill. Ours does not — honest result, expected given 7 folds.
 ---
 
 
