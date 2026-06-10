@@ -1091,7 +1091,7 @@ Noisy estimate: T=7 folds is far below recommended minimum of 16+. Number could 
 > PBO-style cross-sectional CSCV (35 splits, C(7,3)) yields robustness score 0.31, below the random baseline of 0.50. Mean logit +0.41 and OOS excess Sharpe +0.33 confirm selection retains positive out-of-sample value. Results are qualified by T=7 folds, substantially below the minimum recommended for reliable PBO estimation.
 
 
-
+Cross-ticker analysis reveals OFI signal strength is inversely related to market efficiency: TLT (mean gross Sharpe 3.18, std 2.37) substantially outperforms equity index ETFs (SPY 0.36, QQQ -0.05, ES1! -0.30), consistent with lower-frequency institutional participation in bond markets reducing adverse selection costs.
 
 
 
