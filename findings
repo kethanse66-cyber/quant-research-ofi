@@ -6,8 +6,7 @@
 
 ### Files Built
 
-simple_orderbook.py | ofi_synthetic.py | spread_calculator.py | 
-
+simple_orderbook.py | ofi_synthetic.py | spread_calculator.py 
 tick_cleaner.py | volume_bar_builder.py | trade_imbalance.py | 
 
 feature_library.py | queue_imbalance.py | ofi_full.py | 
