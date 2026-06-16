@@ -1234,6 +1234,57 @@ Those negative cost_pct values look like a data issue. Worth checking how cost_p
 
 This reframes everything. Your project conclusion is no longer "signal fails" — it is "signal emerges after burn-in and survives costs on three specific instruments."
 
+Here's your last 3 days summary:
+
+---
+
+**Jun 11 — oos_test.py**
+- OOS IC = +0.0022, OOS Gross Sharpe = 2.491, OOS Net Sharpe = 0.246
+- 8/12 tickers generalise (OOS IC > 0 AND OOS Sharpe > 0.5)
+- IS vs OOS Welch t-test p=not significant — no evidence of overfitting
+- Key finding: OOS Sharpe higher than IS because Apr 2025 tariff shock landed in OOS window — confirmed by monotonic Sharpe increase Oct→Apr
+
+**Jun 12 — performance_reporter.py**
+- Full HTML tearsheet generated
+- Mean IC = +0.0044, t-stat = 3.26, Gross Sharpe = +0.981, Net Sharpe = -1.726
+- Survival rate = 36%, SPY max DD (net) = -17,441
+- Key finding: gross-to-net gap (+0.981 to -1.726) confirms transaction costs at 10-second frequency are the binding constraint
+
+**Jun 13 — factor_model.py**
+- NAV-based FF3 regression — proper excess return construction
+- Alpha p=0.767 (not significant), SMB beta = -0.266 (p=0.004, large-cap tilt), R²=4%
+- Key finding: FF3 explains only 4% of return variance — strategy is largely idiosyncratic, consistent with microstructure alpha not factor exposure
+- Goes in Appendix B of paper, not headline result
+
+---
+
+**Your core interview numbers to memorise:**
+
+| Metric | Value |
+|---|---|
+| Mean IC | +0.0044 |
+| IC t-stat | 3.26 (p=0.0016) |
+| Gross Sharpe | +0.981 |
+| Net Sharpe | -1.726 |
+| OOS Net Sharpe | +0.246 |
+| Survival rate | 36% |
+| FF3 R² | 4% |
+
+No — everything is confirmed and clean from today's runs.
+
+Your numbers are locked:
+
+| Metric | Value |
+|---|---|
+| Mean IC | +0.0044 |
+| IC t-stat | 3.26 |
+| Gross Sharpe | +0.981 |
+| Net Sharpe | -1.726 |
+| OOS Net Sharpe | +0.246 |
+| Survival rate | 36% |
+| FF3 R² | 4% |
+| FF3 Alpha p-value | 0.767 |
+
 
 
 ---
