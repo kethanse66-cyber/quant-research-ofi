@@ -193,7 +193,7 @@ for feat in FEATURES:
     print(f"  {feat:<20} → {n_nan:>6} NaN ({pct_nan:.2f}%) [{flag}]")
 print()
 
-# ── FINAL VERDICT ─────────────────────────────────────────────────────────────
+# ── FINAL VERDICT ─────────────
 print("=" * 60)
 print("FINAL VERDICT")
 print("=" * 60)
