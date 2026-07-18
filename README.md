@@ -1,7 +1,7 @@
 # Predictive Order Flow Imbalance: Cross-Asset Microstructure Alpha
 
 **Author:** Kethan S E  
-**Paper:** [SSRN — insert link]  
+**Paper:** https://dx.doi.org/10.2139/ssrn.7053198 
 **Status:** Complete
 
 ---
