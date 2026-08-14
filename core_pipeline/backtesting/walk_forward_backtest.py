@@ -2,18 +2,6 @@
 # Phase 6 Backtest — June 5
 # Expanding window walk-forward backtest across all 12 tickers
 #
-# Fixes applied:
-# Fix 1: train_signal_std now passed into and used inside run_backtest_slice
-#         — normalization fitted on train, applied to test, no leakage
-# Fix 2: comment corrected — this is periodic rebalancing every 30 min,
-#         not a true entry/exit holding period tracker
-# Fix 3: ADV set per asset class — ETFs 80M, single names 30M, ES1! 1.2M contracts
-# Fix 4: signal threshold added — only trade when |signal_norm| > 0.5
-#         controls turnover, filters weak signals
-# Fix 5: shift(0) removed from gross_pnl — positions already shifted, no-op removed
-#
-# Run from: E:\quant-research-ofi\
-# Command: venv311\Scripts\activate && python walk_forward_backtest.py
 
 import numpy as np
 import pandas as pd
