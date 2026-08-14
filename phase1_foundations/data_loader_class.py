@@ -1,6 +1,4 @@
-# Day 9 - DataLoader Class
-# First Python class in the project
-# Wraps all Phase 1 functions into one reusable object
+
 
 import yfinance as yf
 from scipy import stats
