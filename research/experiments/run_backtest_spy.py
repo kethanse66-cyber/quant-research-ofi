@@ -2,17 +2,6 @@
 # Phase 6 Backtest — June 4
 # First complete SPY backtest: position_sizer + transaction_costs + performance metrics
 #
-# All fixes applied:
-#   Fix 1: gross_pnl = positions * price.diff() — correct dollar units
-#   Fix 2: equity curve uses returns_net = pnl_net / portfolio_value
-#   Fix 3: signal flipped to -ofi_norm — confirmed negative correlation with fwd_ret_10m
-#   Fix 4: forward return target = fwd_ret_10m — where IC lives
-#   Fix 5: holding period = 60 bars (10 minutes) — matches signal horizon, kills turnover
-#   Fix 6: vol floor 0.05, ceiling 1.0 — prevents position spikes in quiet/stressed bars
-#   Fix 7: single normalization only — removed double normalization
-#
-# Run from: E:\quant-research-ofi\
-# Command: venv311\Scripts\activate && python run_backtest_spy.py
 
 import numpy as np
 import pandas as pd
