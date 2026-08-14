@@ -1,5 +1,4 @@
-# D3 Bonus — Crash Analyser
-# quant-research-ofi | phase1_foundations
+
 
 # Import libraries
 import yfinance as yf
